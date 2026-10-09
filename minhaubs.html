@@ -49,6 +49,12 @@
   header.top .brand { font-weight: 700; font-size: 17px; letter-spacing: .2px; }
   header.top .brand span { font-weight: 400; opacity: .8; }
   header.top .crumb { font-size: 13px; opacity: .8; margin-left: auto; }
+  header.top .navlink {
+    color: #fff; text-decoration: none; font-size: 13.5px; font-weight: 600;
+    padding: 6px 12px; border: 1px solid rgba(255,255,255,.45); border-radius: 3px; white-space: nowrap;
+  }
+  header.top .navlink:hover { background: rgba(255,255,255,.12); }
+  header.top .navlink:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
 
   main { max-width: 980px; margin: 0 auto; padding: 20px 16px 120px; }
   h1 { font-size: 20px; margin: 4px 0 2px; color: var(--nav); }
@@ -128,6 +134,7 @@
 <header class="top">
   <div class="brand">PEC <span>| Prontuário Eletrônico</span></div>
   <div class="crumb">Atenção Básica › Atendimento individual › SOAP</div>
+  <a class="navlink" href="pediatria/">Doses em pediatria</a>
 </header>
 
 <main>
