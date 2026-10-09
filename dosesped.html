@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Doses em pediatria – Atenção Básica</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --nav: #0f3d63; --primary: #1b6ca8; --teal: #12a1a6;
+    --bg: #eceff3; --card: #fff; --line: #cfd6de; --text: #27323d; --muted: #66727f;
+    --warn-bg: #fff7e6; --warn-line: #e0b050;
+    box-sizing: border-box;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  * { box-sizing: border-box; }
+  html { scroll-padding-top: 130px; scroll-behavior: smooth; }
+  body { margin: 0; background: var(--bg); color: var(--text); font-family: "Open Sans","Segoe UI",Roboto,Arial,sans-serif; font-size: 15px; line-height: 1.5; }
+  header.top { position: sticky; top: 0; z-index: 20; background: var(--nav); color: #fff; display: flex; align-items: center; gap: 16px; padding: 0 20px; height: 52px; border-bottom: 3px solid var(--teal); }
+  header.top .brand { font-weight: 700; font-size: 17px; }
+  header.top .brand span { font-weight: 400; opacity: .8; }
+  header.top a.back { margin-left: auto; color: #fff; text-decoration: none; font-size: 13.5px; font-weight: 600; padding: 6px 12px; border: 1px solid rgba(255,255,255,.45); border-radius: 3px; }
+  header.top a.back:hover { background: rgba(255,255,255,.12); }
+  .tools { position: sticky; top: 52px; z-index: 15; background: #f4f7fa; border-bottom: 1px solid var(--line); padding: 10px 16px; }
+  .tools-in { max-width: 980px; margin: 0 auto; }
+  .search { width: 100%; padding: 9px 12px; font: inherit; border: 1px solid var(--line); border-radius: 3px; background: #fff; color: var(--text); }
+  .search:focus, a:focus-visible { outline: 2px solid var(--primary); outline-offset: 1px; border-color: var(--primary); }
+  .chips { display: flex; gap: 6px; overflow-x: auto; padding: 8px 0 2px; scrollbar-width: thin; }
+  .chips a { flex: none; font-size: 12.5px; font-weight: 600; color: var(--primary); background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 3px 11px; text-decoration: none; white-space: nowrap; }
+  .chips a:hover { background: #eef5fb; }
+  main { max-width: 980px; margin: 0 auto; padding: 20px 16px 60px; }
+  h1 { font-size: 20px; margin: 4px 0 2px; color: var(--nav); }
+  .credit { color: var(--muted); margin: 0 0 14px; font-size: 13.5px; }
+  .warn { background: var(--warn-bg); border: 1px solid var(--warn-line); border-radius: 3px; padding: 9px 14px; font-size: 13.5px; margin-bottom: 18px; }
+  .sec { background: var(--card); border: 1px solid var(--line); border-radius: 3px; margin-bottom: 14px; }
+  .sec h2 { margin: 0; font-size: 14.5px; color: var(--nav); background: #f4f7fa; border-bottom: 1px solid var(--line); border-left: 4px solid var(--teal); padding: 9px 14px; }
+  .tw { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th { text-align: left; background: #e7eef5; color: var(--nav); font-weight: 700; padding: 8px 14px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+  td { padding: 8px 14px; border-bottom: 1px solid #e6ebf0; vertical-align: top; }
+  tr:last-child td { border-bottom: 0; }
+  td.c0 { font-weight: 600; min-width: 190px; }
+  tbody tr:hover { background: #f6fafd; }
+  .items { margin: 0; padding: 10px 14px 10px 34px; }
+  .items li { padding: 3px 0; }
+  .note { margin: 0; padding: 9px 14px; font-size: 13.5px; color: var(--muted); border-top: 1px solid #e6ebf0; }
+  .tw + .tw, .tw + .items { border-top: 1px solid var(--line); }
+  .hidden { display: none !important; }
+  .empty { display: none; text-align: center; color: var(--muted); padding: 30px 0; }
+  .src { font-size: 12.5px; color: var(--muted); margin-top: 18px; }
+  @media (max-width: 520px) { header.top .brand span { display: none; } td, th { padding: 7px 10px; } html { scroll-padding-top: 150px; } }
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="brand">PEC <span>| Prontuário Eletrônico</span></div>
+  <a class="back" href="../minhaubs.html">Voltar ao registro SOAP</a>
+</header>
+
+<div class="tools">
+  <div class="tools-in">
+    <input class="search" id="q" type="search" placeholder="Buscar medicamento, marca ou dose" aria-label="Buscar medicamento, marca ou dose" autocomplete="off">
+    <nav class="chips" aria-label="Seções"><a href="#analgesicos-antitermicos">Analgésicos/antitérmicos</a><a href="#protetores-gastricos-rge">Protetores gástricos/RGE</a><a href="#antialergicos">Antialérgicos</a><a href="#simeticona-75-mg-ml">Simeticona 75 mg/ml</a><a href="#antibioticos">Antibióticos</a><a href="#antiemeticos-vomitos">Antieméticos/vômitos</a><a href="#antiespasmodicos-colicas">Antiespasmódicos/cólicas</a><a href="#antiinflamatorios">Antiinflamatórios</a><a href="#antiparasitarios">Antiparasitários</a><a href="#xaropes-tosse">Xaropes/tosse</a><a href="#corticoides-alergia-asma-laringite">Corticoides/alergia/asma/laringite</a><a href="#ranitidina-solucao-oral-label">Ranitidina solução oral (Label®)</a><a href="#azitromicina-azi-astro">Azitromicina (Azi®, Astro®)</a><a href="#ivermectina-6mg-revectina">Ivermectina 6mg (Revectina®)</a><a href="#levodropropizina-xarope-30mg-5ml-antux">Levodropropizina xarope 30mg/5ml (Antux®)</a><a href="#salbutamol-xarope-2mg-5ml-aerolin">Salbutamol xarope 2mg/5ml (Aerolin®)</a><a href="#oftalmologicos">Oftalmológicos</a><a href="#otorrinolaringologicos">Otorrinolaringológicos</a><a href="#nebulizacoes">Nebulizações</a><a href="#hidratacao-requerimento-basico-para-24-horas">Hidratação: requerimento básico para 24 horas</a><a href="#drogas-na-emergencia">Drogas na emergência</a></nav>
+  </div>
+</div>
+
+<main>
+  <h1>Sugestões de doses em pediatria através de dicas e macetes</h1>
+  <p class="credit">HILF – Hospital Infantil Luís França. Elaboração: Jean Roberge (Pediatra HRO) e Camila Biazi (Doutoranda UNOCHAPECÓ).</p>
+  <div class="warn">Material de consulta rápida. Confirme a dose na bula, no protocolo do serviço e com o preceptor antes de prescrever.</div>
+
+  <div id="content">
+<section class="sec" id="analgesicos-antitermicos"><h2>Analgésicos/antitérmicos</h2>
+<div class="tw"><table><thead><tr><th>Medicamento</th><th>Dose</th></tr></thead><tbody>
+<tr><td class="c0">DIPIRONA Gotas 500mg/ml (Novalgina®)</td><td class="c1">1 gota/kg/dose 6/6hs se febre/dor (máx.: 40 gotas/dose)</td></tr>
+<tr><td class="c0">DIPIRONA Injetável - IM/EV (Novalgina®)</td><td class="c1">Dose min: Peso x 0,03 ou Dose max: Peso ÷ 20 = dose em ml (máx.: 2ml) 6/6hs se febre/dor - Diluir com AD ou SF 0,9%</td></tr>
+<tr><td class="c0">IBUPROFENO Gotas 50mg/ml (Alivium®)</td><td class="c1">2 gotas/Kg/dose até de 6/6hs se febre/dor</td></tr>
+<tr><td class="c0">IBUPROFENO Gotas 100mg/ml (Alivium®)</td><td class="c1">1 gota/Kg/dose até de 6/6hs se febre/dor (máx.: 40 gts/dose)</td></tr>
+<tr><td class="c0">PARACETAMOL Gotas 200mg/ml (Tylenol®)</td><td class="c1">1 gota/Kg/dose 4/4 ou 6/6hs (máx.: 50 gts/dose)</td></tr>
+<tr><td class="c0">TRAMADOL (Tramal®) Injetável 50mg/ml</td><td class="c1">1-1,5mg/kg/dose EV de 8/8h. Diluir em SF 0,9% 50-100ml</td></tr>
+</tbody></table></div>
+</section>
+<section class="sec" id="protetores-gastricos-rge"><h2>Protetores gástricos/RGE</h2>
+<div class="tw"><table><thead><tr><th>Medicamento</th><th>Dose</th></tr></thead><tbody>
+<tr><td class="c0">CARVÃO ATIVADO – Oral ou SNG</td><td class="c1">1g/kg/dose (Máx. 50g)</td></tr>
+<tr><td class="c0">OMEPRAZOL (Losec®) 4mg/ml</td><td class="c1">1mg/kg/dia, EV, dose única pela manhã (dose máx: 60mg/dia)</td></tr>
+<tr><td class="c0">RANITIDINA Solução Oral 15mg/ml (Label®)</td><td class="c1">RGE. Vide tabela no final do documento</td></tr>
+<tr><td class="c0">RANITIDINA Gotas (Label®)</td><td class="c1">2 gotas/kg/dose de 12/12h</td></tr>
+<tr><td class="c0">RANITIDINA Injetável 50mg/2ml (Antak®)</td><td class="c1">Peso ÷ 20 = dose em ml EV (máx.: 2ml)</td></tr>
+</tbody></table></div>
+</section>
+<section class="sec" id="antialergicos"><h2>Antialérgicos</h2>
+<div class="tw"><table><thead><tr><th>Medicamento</th><th>Dose</th></tr></thead><tbody>
+<tr><td class="c0">ADRENALINA Injetável 1mg/ml</td><td class="c1">Peso x 0,01 = dose em ml IM na coxa (máx.: 0,5ml)</td></tr>
+<tr><td class="c0">DESLORATADINA 2,5mg/5ml (Sigma-liv®)</td><td class="c1">2-5 anos 2,5ml; 6-11 anos 5ml; &gt; 12 anos 10 ml 1x ao dia</td></tr>
+<tr><td class="c0">DIFENIDRAMINA 50mg/ml (Difenidrin®)</td><td class="c1">1-2mg/kg/dose – Diluído em SF 0,9%</td></tr>
+<tr><td class="c0">HIDROXIZINA 2mg/5ml (Hixizine®) Cças &gt;6kg</td><td class="c1">Peso ÷ 3 = dose em ml 8/8hs 5 - 10 dias (máx.: 10ml/dose)</td></tr>
+<tr><td class="c0">PROMETAZINA Injetável 50mg/2ml (Fenergan®)</td><td class="c1">Peso x 0,01 = dose em ml IM (máx.: 0,5ml)</td></tr>
+</tbody></table></div>
+</section>
+<section class="sec" id="simeticona-75-mg-ml"><h2>Simeticona 75 mg/ml</h2>
+<ul class="items"><li>Se &lt; 1 ano =&gt; 6 gotas de 8/8h</li><li>Se entre 1 ano e 12 anos =&gt; 12  gotas de 8/8h</li><li>Se &gt; 12 anos =&gt; 16 gotas de 8/8h</li></ul>
+</section>
+<section class="sec" id="antibioticos"><h2>Antibióticos</h2>
+<div class="tw"><table><thead><tr><th>Medicamento</th><th>Dose</th></tr></thead><tbody>
+<tr><td class="c0">AMOXICILINA 250mg/5ml (Novocilin®)</td><td class="c1">Peso ÷ 3 = dose em ml 8/8hs 7 a 14 dias (máx.: 10ml/dose)</td></tr>
+<tr><td class="c0">AMOXICILINA+CLAV. 250 + 62,5mg/5ml (Novamox®)</td><td class="c1">Peso ÷ 3 = dose em ml 8/8hs 7 a 14 dias (máx.: 10ml/dose)</td></tr>
+<tr><td class="c0">AMOXICILINA 400mg/5ml (Novocilin®)</td><td class="c1">Peso ÷ 3 = dose em ml 12/12hs 7 a 14 dias (máx.: 10ml/dose)</td></tr>
+<tr><td class="c0">AMOXICILINA+CLAV. 400 + 57mg/5ml (Novamox®)</td><td class="c1">Peso ÷ 3 = dose em ml 12/12hs 7 a 14 dias (máx.: 10ml/dose)</td></tr>
+<tr><td class="c0">AZITROMICINA 200mg/5ml (Azi®, Astro®)</td><td class="c1">Peso ÷ 4 = dose em ml 1x/dia 3-5 dias</td></tr>
+<tr><td class="c0">CEFACLOR 375mg/5ml (Ceclor®)</td><td class="c1">20-30mg/Kg/dia de 12/12h (máximo 2g/dia)</td></tr>
+<tr><td class="c0">CEFALEXINA 250mg/5ml (Keflex®)</td><td class="c1">Peso ÷ 4 = dose em ml 6/6hs 7 a 14 dias (máx.: 10ml/dose)</td></tr>
+<tr><td class="c0">CEFTRIAXONA Injetável 500mg e 1g (Rocefin®)</td><td class="c1">50mg/Kg/dose 1x/dia IM 3 a 7 dias (máx.: 1,5g/dose)</td></tr>
+<tr><td class="c0">CLARITROMICINA 250mg/5ml (Klaricid®)</td><td class="c1">15mg/Kg/dia ÷ 2 por 7-14 dias</td></tr>
+<tr><td class="c0">METRONIDAZOL 200mg/5ml (Flagyl®)</td><td class="c1">0,5ml/Kg/dia de 8/8h (máx.: 10ml/dose)</td></tr>
+<tr><td class="c0">PENICILINA BENZATINA Injetável (Benzetacil®)</td><td class="c1">11 - 20Kg: 600.000UI; &gt;20Kg: 1.200.000UI IM. Dose única</td></tr>
+</tbody></table></div>
+</section>
+<section class="sec" id="antiemeticos-vomitos"><h2>Antieméticos/vômitos</h2>
+<div class="tw"><table><thead><tr><th>Medicamento</th><th>Dose</th></tr></thead><tbody>
+<tr><td class="c0">BROMOPRIDA Gotas 4mg/ml (Digesan®)</td><td class="c1">1 gota/kg/dose 8/8hs (máx.: 40 gotas/dose)</td></tr>
+<tr><td class="c0">BROMOPRIDA Injetável (IM/EV) 10mg/2ml (Plamet®). NÃO FAZER PLASIL EM MENOR 18 ANOS</td><td class="c1">Peso x 0,03 = dose em ml (máx.: 2ml) 8/8hs se náuseas/vômito. Diluir com AD ou SF 0,9%</td></tr>
+<tr><td class="c0">DIMENIDRATO Gotas 25mg/ml (Dramin®)</td><td class="c1">1 gota/kg/dose 6/6hs (máx.: 40 gotas/dose)</td></tr>
+<tr><td class="c0">DRAMIN B6® Injetável 50mg/10ml EV</td><td class="c1">10Kg = 3ml; 20kg = 6ml (máx.: 10ml/dose) 6/6h</td></tr>
+</tbody></table></div>
+</section>
+<section class="sec" id="antiespasmodicos-colicas"><h2>Antiespasmódicos/cólicas</h2>
+<div class="tw"><table><thead><tr><th>Medicamento</th><th>Dose</th></tr></thead><tbody>
+<tr><td class="c0">COLIKDS®</td><td class="c1">5 gotas 1x ao dia</td></tr>
+<tr><td class="c0">DIMETICONA Gotas (Luftal®)</td><td class="c1">1 gota/kg/dose 6/6hs (máx.: 40 gotas/dose)</td></tr>
+<tr><td class="c0">ESCOPOLAMINA+DIPIRONA (Buscopam Composto®)</td><td class="c1">1 gota/kg/dose 6/6hs (máx.: 40 gotas/dose)</td></tr>
+<tr><td class="c0">ESCOPOLAMINA+DIPIRONA (Buscopam Composto®) EV</td><td class="c1">Peso ÷ 20 dose em ml, EV de 6/6h</td></tr>
+</tbody></table></div>
+</section>
+<section class="sec" id="antiinflamatorios"><h2>Antiinflamatórios</h2>
+<div class="tw"><table><thead><tr><th>Medicamento</th><th>Dose</th></tr></thead><tbody>
+<tr><td class="c0">CETOPROFENO Gotas 20mg/ml (Profenid®) &gt; 1 ano</td><td class="c1">1 gota/Kg/dose 8/8hs 2 a 5 dias (máx.: 50 gotas/dose)</td></tr>
+<tr><td class="c0">CETOPROFENO Injetável IM/EV (Profenid®) &gt; 1 ano</td><td class="c1">1 mg/kg/dose 8/8h - EV infundir diluído no soro lentamente</td></tr>
+<tr><td class="c0">NIMESULIDA Gotas (Scaflam®) &gt; 3 anos</td><td class="c1">1 gota/Kg/dose 12/12hs 2 a 5 dias (máx.: 40 gotas/dose)</td></tr>
+</tbody></table></div>
+</section>
+<section class="sec" id="antiparasitarios"><h2>Antiparasitários</h2>
+<div class="tw"><table><thead><tr><th>Medicamento</th><th>Dose</th></tr></thead><tbody>
+<tr><td class="c0">ANNITA® Suspensão Oral 20mg/ml (Nitazoxanida)</td><td class="c1">7,5 x Peso ÷ 20 = dose em ml 12/12hs 3 dias (máx.: 15ml/dose)</td></tr>
+<tr><td class="c0">ALBENDAZOL Suspensão Oral 400mg/10ml</td><td class="c1">10ml 1x ao dia - 3-5 dias. Evitar &lt; 2 anos</td></tr>
+<tr><td class="c0">IVERMECTINA 6mg (Revectina®)</td><td class="c1">Escabiose, Pediculose, Miíase. Vide tabela</td></tr>
+<tr><td class="c0">MEBENDAZOL Suspensão Oral 100mg/5ml</td><td class="c1">5ml 12/12hs 3 dias. Evitar &lt; 2 anos</td></tr>
+<tr><td class="c0">PIRVÍNIO (Pyr-pam®) 10mg/ml - Oxiuríase</td><td class="c1">1ml/kg dose única – Máx 60ml – repetir após 2 a 3 sem</td></tr>
+</tbody></table></div>
+</section>
+<section class="sec" id="xaropes-tosse"><h2>Xaropes/tosse</h2>
+<div class="tw"><table><thead><tr><th>Medicamento</th><th>Dose</th></tr></thead><tbody>
+<tr><td class="c0">ACEBROFILINA Xarope 25mg/5ml (Filinar®)</td><td class="c1">3-6 anos: 5ml; &gt; 6 anos: 10 ml 12/12hs 5 dias</td></tr>
+<tr><td class="c0">HEDERA HELIX</td><td class="c1">1-5 anos: 2,5ml; 6-12 anos: 5 ml; &gt; 12 anos: 10 ml</td></tr>
+<tr><td class="c0">LEVODROPROPIZINA Xarope 30mg/5ml (Antux®)</td><td class="c1">Tosse seca, irritativa. &gt; 2 anos. Peso/6: dose em ml 8/8h</td></tr>
+</tbody></table></div>
+</section>
+<section class="sec" id="corticoides-alergia-asma-laringite"><h2>Corticoides/alergia/asma/laringite</h2>
+<div class="tw"><table><thead><tr><th>Medicamento</th><th>Dose</th></tr></thead><tbody>
+<tr><td class="c0">DEXAMETASONA Elixir (Decadron®)</td><td class="c1">Peso ÷ 4 = ml/dose 6/6hs 5-7 dias (máx.: 15ml/dose)</td></tr>
+<tr><td class="c0">DEXAMETASONA Injetável 4mg/ml (Decadron®)</td><td class="c1">0,6mg/kg/dose ataque e 0,15mg/kg/dose manutenção IM ou EV (máx.: 10mg/dose). Diluir bem devido prurido anal</td></tr>
+<tr><td class="c0">KOIDE D® XPE (Dexclorfeniramina + betametasona)</td><td class="c1">Peso ÷ 4 = dose em ml 8/8 5 dias (máx.: 10ml/dose)</td></tr>
+<tr><td class="c0">HIDROCORTISONA 100 e 500 mg (Solucortef®)</td><td class="c1">5mg/kg (ASMA) e 10mg/kg (ALERGIA). Infundir em SG 5%</td></tr>
+<tr><td class="c0">PREDINISOLONA 3mg/ml (Prelone®)</td><td class="c1">Peso ÷ 3 = dose em ml 1x dia – 5-7 dias (máx.: 20ml/dia)</td></tr>
+</tbody></table></div>
+</section>
+<section class="sec" id="ranitidina-solucao-oral-label"><h2>Ranitidina solução oral (Label®)</h2>
+<div class="tw"><table><thead><tr><th>Peso</th><th>Dosagem</th></tr></thead><tbody>
+<tr><td class="c0">3 - 4 Kg</td><td class="c1">0,5 ml 12/12hs</td></tr>
+<tr><td class="c0">5 - 7 Kg</td><td class="c1">1 ml 12/12hs</td></tr>
+<tr><td class="c0">8 - 10 Kg</td><td class="c1">1,5 ml 12/12hs</td></tr>
+<tr><td class="c0">11 - 13 Kg</td><td class="c1">2 ml 12/12hs</td></tr>
+<tr><td class="c0">14 - 16 Kg</td><td class="c1">2,5 ml 12/12hs</td></tr>
+<tr><td class="c0">17 - 19 Kg</td><td class="c1">3 ml 12/12hs</td></tr>
+<tr><td class="c0">20 - 22 Kg</td><td class="c1">3,5 ml 12/12hs</td></tr>
+<tr><td class="c0">23 - 25 Kg</td><td class="c1">4 ml 12/12hs</td></tr>
+<tr><td class="c0">26 - 28 Kg</td><td class="c1">4,5 ml 12/12hs</td></tr>
+<tr><td class="c0">29 - 31 Kg</td><td class="c1">5 ml 12/12hs</td></tr>
+<tr><td class="c0">32 - 34 Kg</td><td class="c1">5,5 ml 12/12hs</td></tr>
+<tr><td class="c0">35 - 37 Kg</td><td class="c1">6 ml 12/12hs</td></tr>
+<tr><td class="c0">38 - 40 Kg</td><td class="c1">6,5 ml 12/12hs</td></tr>
+<tr><td class="c0">&gt; 40 Kg</td><td class="c1">10 ml 12/12hs</td></tr>
+</tbody></table></div>
+</section>
+<section class="sec" id="azitromicina-azi-astro"><h2>Azitromicina (Azi®, Astro®)</h2>
+<div class="tw"><table><thead><tr><th>Peso</th><th>Dosagem</th><th>Posologia</th><th>Tempo</th><th>Apresentação</th></tr></thead><tbody>
+<tr><td class="c0">&lt; 15 kg</td><td class="c1">10 mg/kg</td><td class="c2">1x/dia</td><td class="c3">5 dias</td><td class="c4">600mg (200mg/5ml)</td></tr>
+<tr><td class="c0">15 – 25 kg</td><td class="c1">5 ml</td><td class="c2">1x/dia</td><td class="c3">5 dias</td><td class="c4">900mg</td></tr>
+<tr><td class="c0">26 – 35 kg</td><td class="c1">7,5 ml</td><td class="c2">1x/dia</td><td class="c3">5 dias</td><td class="c4">1500mg (AZI®)</td></tr>
+<tr><td class="c0">36 – 45 kg</td><td class="c1">10 ml</td><td class="c2">1x/dia</td><td class="c3">5 dias</td><td class="c4">600 + 900mg</td></tr>
+</tbody></table></div>
+</section>
+<section class="sec" id="ivermectina-6mg-revectina"><h2>Ivermectina 6mg (Revectina®)</h2>
+<div class="tw"><table><thead><tr><th>Peso</th><th>Dosagem</th></tr></thead><tbody>
+<tr><td class="c0">15 – 24 Kg</td><td class="c1">½ cp dose única</td></tr>
+<tr><td class="c0">25 – 35 Kg</td><td class="c1">1 cp dose única</td></tr>
+<tr><td class="c0">36 – 50 Kg</td><td class="c1">1½ cp dose única</td></tr>
+<tr><td class="c0">51 – 65 Kg</td><td class="c1">2 cp dose única</td></tr>
+<tr><td class="c0">66 – 79 Kg</td><td class="c1">2½ cp dose única</td></tr>
+<tr><td class="c0">&gt; 79 Kg</td><td class="c1">3 cp dose única</td></tr>
+</tbody></table></div>
+</section>
+<section class="sec" id="levodropropizina-xarope-30mg-5ml-antux"><h2>Levodropropizina xarope 30mg/5ml (Antux®)</h2>
+<div class="tw"><table><thead><tr><th>Peso</th><th>Dosagem</th></tr></thead><tbody>
+<tr><td class="c0">10 - 13 Kg</td><td class="c1">2 ml 8/8hs</td></tr>
+<tr><td class="c0">14 - 17 Kg</td><td class="c1">2,5 ml 8/8hs</td></tr>
+<tr><td class="c0">18 - 21 Kg</td><td class="c1">3 ml 8/8hs</td></tr>
+<tr><td class="c0">22 - 25 Kg</td><td class="c1">4 ml 8/8hs</td></tr>
+<tr><td class="c0">26 - 29 Kg</td><td class="c1">4,5 ml 8/8hs</td></tr>
+<tr><td class="c0">30 - 33 Kg</td><td class="c1">5 ml 8/8hs</td></tr>
+<tr><td class="c0">34 - 37 Kg</td><td class="c1">6 ml 8/8hs</td></tr>
+<tr><td class="c0">38 - 40 Kg</td><td class="c1">7 ml 8/8hs</td></tr>
+<tr><td class="c0">&gt; 40 Kg</td><td class="c1">10 ml 8/8hs</td></tr>
+</tbody></table></div>
+</section>
+<section class="sec" id="salbutamol-xarope-2mg-5ml-aerolin"><h2>Salbutamol xarope 2mg/5ml (Aerolin®)</h2>
+<div class="tw"><table><thead><tr><th>Peso</th><th>Dosagem</th></tr></thead><tbody>
+<tr><td class="c0">3 Kg - 4 Kg</td><td class="c1">0,5 ml 8/8hs</td></tr>
+<tr><td class="c0">5 Kg - 6 Kg</td><td class="c1">1 ml 8/8hs</td></tr>
+<tr><td class="c0">7 Kg - 8 Kg</td><td class="c1">1,5 ml 8/8hs</td></tr>
+<tr><td class="c0">9 Kg - 10 Kg</td><td class="c1">2 ml 8/8hs</td></tr>
+<tr><td class="c0">11 Kg - 12 Kg</td><td class="c1">2,5 ml 8/8hs</td></tr>
+<tr><td class="c0">13 Kg - 14 Kg</td><td class="c1">3 ml 8/8hs</td></tr>
+<tr><td class="c0">15 Kg - 16 Kg</td><td class="c1">3,5 ml 8/8hs</td></tr>
+<tr><td class="c0">17 Kg - 18 Kg</td><td class="c1">4 ml 8/8hs</td></tr>
+<tr><td class="c0">19 Kg - 20 Kg</td><td class="c1">4,5 ml 8/8hs</td></tr>
+<tr><td class="c0">&gt; 20 Kg</td><td class="c1">5 ml 8/8hs</td></tr>
+</tbody></table></div>
+<p class="note">Para maiores de 6 anos: 5 ml 6/6 ou 8/8hs. Provoca taquicardia e tremores!</p>
+</section>
+<section class="sec" id="oftalmologicos"><h2>Oftalmológicos</h2>
+<div class="tw"><table><thead><tr><th>Medicamento</th><th>Dose usual</th></tr></thead><tbody>
+<tr><td class="c0">CROMOGLICATO DISSÓDICO 2% (Cromolerg®)</td><td class="c1">1 gota 6/6 horas 5 dias</td></tr>
+<tr><td class="c0">GENTAMICINA COLÍRIO</td><td class="c1">1 gota 6/6 horas 5 dias</td></tr>
+<tr><td class="c0">MAXITROL® COLÍRIO (Dexam, Neomicina...)</td><td class="c1">1 gota 6/6 horas 5 dias</td></tr>
+<tr><td class="c0">TOBRAMICINA COLÍRIO (Tobrex®)</td><td class="c1">1 gota 6/6 horas 5 dias</td></tr>
+<tr><td class="c0">TOBRAMICINA POM OFTALM (Tobrex®)</td><td class="c1">3x/dia 5 dias</td></tr>
+</tbody></table></div>
+</section>
+<section class="sec" id="otorrinolaringologicos"><h2>Otorrinolaringológicos</h2>
+<div class="tw"><table><thead><tr><th>Medicamento</th><th>Dose usual</th></tr></thead><tbody>
+<tr><td class="c0">BIAMOTL® OTOLÓGICO (Ciprofloxacin)</td><td class="c1">3 gotas 6/6 horas 5 dias</td></tr>
+<tr><td class="c0">OTO-BETNOVATE® (Betametasona/Clorfenesina...)</td><td class="c1">3 gotas 6/6 horas 5 dias</td></tr>
+<tr><td class="c0">OTOSPORIN (Hidrocortisona/Neomicina/Polimixina)</td><td class="c1">3 gotas 6/6 horas 5 dias</td></tr>
+</tbody></table></div>
+</section>
+<section class="sec" id="nebulizacoes"><h2>Nebulizações</h2>
+<div class="tw"><table><thead><tr><th>Asma/BQL</th><th>Dose</th></tr></thead><tbody>
+<tr><td class="c0">SF 0,9%</td><td class="c1">3 a 5 ml</td></tr>
+<tr><td class="c0">BEROTEC</td><td class="c1">1 gota/3Kg (máx.: 10 gotas)</td></tr>
+<tr><td class="c0">ATROVENT</td><td class="c1">Dobro do Berotec</td></tr>
+</tbody></table></div>
+<p class="note">Até 3x de 20 em 20 minutos.</p>
+<div class="tw"><table><thead><tr><th>Laringite</th><th>Dose</th></tr></thead><tbody>
+<tr><td class="c0">SF 0,9%</td><td class="c1">4 ml</td></tr>
+<tr><td class="c0">ADRENALINA</td><td class="c1">1 ml</td></tr>
+</tbody></table></div>
+<p class="note">Até 3x de 20 em 20 minutos.</p>
+</section>
+<section class="sec" id="hidratacao-requerimento-basico-para-24-horas"><h2>Hidratação: requerimento básico para 24 horas</h2>
+<div class="tw"><table><thead><tr><th>Peso</th><th>Volume de SG 5%</th></tr></thead><tbody>
+<tr><td class="c0">0 - 10 Kg</td><td class="c1">100ml X Peso</td></tr>
+<tr><td class="c0">11 - 20 Kg</td><td class="c1">1000ml + 50ml para cada Kg a mais</td></tr>
+<tr><td class="c0">21 - 40 Kg</td><td class="c1">1500ml + 20ml para cada Kg a mais</td></tr>
+<tr><td class="c0">&gt; 40 Kg</td><td class="c1">2000ml</td></tr>
+</tbody></table></div>
+<p class="note">Dividir volume total por 4 e infundir de 6/6 horas.</p>
+<div class="tw"><table><thead><tr><th>Eletrólito</th><th>Quantidade</th></tr></thead><tbody>
+<tr><td class="c0">NaCl 20%</td><td class="c1">4,4ml para cada 500ml de SG 5%</td></tr>
+<tr><td class="c0">KCl 19,1%</td><td class="c1">4ml para cada 500ml de SG 5%</td></tr>
+</tbody></table></div>
+<p class="note">Faça uma regra de 3 para os demais volumes.</p>
+</section>
+<section class="sec" id="drogas-na-emergencia"><h2>Drogas na emergência</h2>
+<div class="tw"><table><thead><tr><th>Medicamento</th><th>Dose usual</th></tr></thead><tbody>
+<tr><td class="c0">ADRENALINA</td><td class="c1">(1ml + 9ml AD) = 0,1ml/Kg EV</td></tr>
+<tr><td class="c0">ATROPINA 0,25mg/ml</td><td class="c1">PESO X 0,08ml EV</td></tr>
+<tr><td class="c0">ATROPINA 0,5mg/ml</td><td class="c1">PESO X 0,04ml EV</td></tr>
+<tr><td class="c0">CETAMINA 500mg/10ml (Ketalar®)</td><td class="c1">PESO X 0,04ml EV</td></tr>
+<tr><td class="c0">CLORPROMAZINA 25mg/5ml (Ampliclil®)</td><td class="c1">PESO X 0,2ml IM/EV</td></tr>
+<tr><td class="c0">DIAZEPAM 10mg/2ml (Valium®)</td><td class="c1">PESO X 0,06ml EV</td></tr>
+<tr><td class="c0">FENITOÍNA 250mg/5ml (Hidantal®)</td><td class="c1">PESO X 0,4ml EV 30' (1:9SF)</td></tr>
+<tr><td class="c0">FENOBARBITAL 200mg/2ml</td><td class="c1">PESO X 0,2ml IM/EV 10' (1:9SF)</td></tr>
+<tr><td class="c0">FENTANILA 50mcg/ml (Fentanil®)</td><td class="c1">PESO X 0,06ml + 3ml AD EV 1'</td></tr>
+<tr><td class="c0">FLUMAZENIL 0,5mg/ml (Lanexat®)</td><td class="c1">PESO X 0,1ml EV</td></tr>
+<tr><td class="c0">MANITOL 20% (250ml a 500ml)</td><td class="c1">PESO X 10ml EV em 20'</td></tr>
+<tr><td class="c0">MEPERIDINA 100mg/2ml (Dolantina®)</td><td class="c1">(2ml + 8ml AD) = 0,2ml/Kg IM/EV</td></tr>
+<tr><td class="c0">MIDAZOLAM 15mg/3ml (Dormonid®)</td><td class="c1">PESO X 0,04ml IM/EV</td></tr>
+<tr><td class="c0">MIDAZOLAM 5mg/5ml (Dormonid®)</td><td class="c1">PESO X 0,2ml IM/EV</td></tr>
+<tr><td class="c0">MORFINA 10mg/ml (Dimor®)</td><td class="c1">PESO X 0,01ml IM/SC/EV 1'</td></tr>
+<tr><td class="c0">NALOXONA 0,4mg/ml (Narcan®)</td><td class="c1">PESO X 0,25ml EV</td></tr>
+</tbody></table></div>
+</section>
+  </div>
+  <p class="empty" id="empty">Nenhum medicamento encontrado para essa busca.</p>
+</main>
+
+<script>
+  const q = document.getElementById("q");
+  const secs = Array.from(document.querySelectorAll(".sec"));
+  const empty = document.getElementById("empty");
+  const norm = s => s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  q.addEventListener("input", () => {
+    const term = norm(q.value.trim());
+    let any = false;
+    secs.forEach(sec => {
+      const titleHit = term && norm(sec.querySelector("h2").textContent).includes(term);
+      let hits = 0;
+      sec.querySelectorAll("tbody tr").forEach(tr => {
+        const ok = !term || titleHit || norm(tr.textContent).includes(term);
+        tr.classList.toggle("hidden", !ok);
+        if (ok) hits++;
+      });
+      const other = sec.querySelectorAll(".items li, .note");
+      other.forEach(el => {
+        const ok = !term || titleHit || norm(el.textContent).includes(term);
+        el.classList.toggle("hidden", !ok);
+        if (ok) hits++;
+      });
+      sec.querySelectorAll(".tw").forEach(tw => {
+        tw.classList.toggle("hidden", !tw.querySelector("tbody tr:not(.hidden)"));
+      });
+      const show = !term || titleHit || hits > 0;
+      sec.classList.toggle("hidden", !show);
+      if (show) any = true;
+    });
+    empty.style.display = any ? "none" : "block";
+  });
+</script>
+</body>
+</html>
