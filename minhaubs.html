@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Registro SOAP – Atenção Básica</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.umd.js"></script>
+<style>
+  :root {
+    --nav: #0f3d63;
+    --primary: #1b6ca8;
+    --primary-dark: #14527f;
+    --teal: #12a1a6;
+    --bg: #eceff3;
+    --card: #ffffff;
+    --line: #cfd6de;
+    --text: #27323d;
+    --muted: #66727f;
+    --s: #1b6ca8;
+    --o: #12a1a6;
+    --a: #e08a00;
+    --p: #3c9a4a;
+    --ok: #2e7d32;
+    --err: #c62828;
+    box-sizing: border-box;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  * { box-sizing: border-box; }
+  html { scroll-padding-top: 70px; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: "Open Sans", "Segoe UI", Roboto, Arial, sans-serif;
+    font-size: 15px;
+    line-height: 1.5;
+  }
+  header.top {
+    position: sticky; top: 0; z-index: 10;
+    background: var(--nav);
+    color: #fff;
+    display: flex; align-items: center; gap: 16px;
+    padding: 0 20px; height: 52px;
+    border-bottom: 3px solid var(--teal);
+  }
+  header.top .brand { font-weight: 700; font-size: 17px; letter-spacing: .2px; }
+  header.top .brand span { font-weight: 400; opacity: .8; }
+  header.top .crumb { font-size: 13px; opacity: .8; margin-left: auto; }
+
+  main { max-width: 980px; margin: 0 auto; padding: 20px 16px 120px; }
+  h1 { font-size: 20px; margin: 4px 0 2px; color: var(--nav); }
+  .sub { color: var(--muted); margin: 0 0 18px; font-size: 13.5px; }
+
+  .panel {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    margin-bottom: 14px;
+  }
+  .panel > .head {
+    background: #f4f7fa;
+    border-bottom: 1px solid var(--line);
+    padding: 9px 14px;
+    font-weight: 700; font-size: 14px; color: var(--nav);
+  }
+  .ident { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; padding: 14px; }
+  label.f { display: block; font-size: 12.5px; font-weight: 600; color: var(--muted); margin-bottom: 3px; }
+  input[type=text], input[type=date] {
+    width: 100%; padding: 8px 10px; font: inherit;
+    border: 1px solid var(--line); border-radius: 3px; background: #fff; color: var(--text);
+  }
+
+  .soap { display: grid; grid-template-columns: 56px 1fr; }
+  .soap .letter {
+    display: flex; align-items: flex-start; justify-content: center;
+    padding-top: 14px; color: #fff; font-weight: 700; font-size: 26px;
+  }
+  .soap .body { padding: 12px 14px 14px; }
+  .soap .title { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+  .soap .title strong { font-size: 15px; color: var(--nav); }
+  .soap .count { font-size: 12px; color: var(--muted); white-space: nowrap; }
+  .soap .hint { font-size: 12.5px; color: var(--muted); margin: 1px 0 8px; }
+  textarea {
+    width: 100%; min-height: 150px; resize: vertical;
+    padding: 10px; font: inherit; line-height: 1.5;
+    border: 1px solid var(--line); border-radius: 3px; background: #fff; color: var(--text);
+  }
+  input:focus, textarea:focus, button:focus-visible {
+    outline: 2px solid var(--primary); outline-offset: 1px; border-color: var(--primary);
+  }
+  .S .letter { background: var(--s); }
+  .O .letter { background: var(--o); }
+  .A .letter { background: var(--a); }
+  .P .letter { background: var(--p); }
+
+  .bar {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 10;
+    background: #fff; border-top: 1px solid var(--line);
+    padding: 10px 16px calc(10px + env(safe-area-inset-bottom, 0px));
+    display: flex; flex-wrap: wrap; gap: 10px; justify-content: flex-end; align-items: center;
+  }
+  .bar .status { margin-right: auto; font-size: 13px; color: var(--muted); }
+  .bar .status.ok { color: var(--ok); }
+  .bar .status.err { color: var(--err); }
+  button {
+    font: inherit; font-weight: 600; cursor: pointer;
+    padding: 9px 16px; border-radius: 3px; border: 1px solid var(--primary);
+    background: var(--primary); color: #fff;
+  }
+  button:hover { background: var(--primary-dark); }
+  button.sec { background: #fff; color: var(--primary); }
+  button.sec:hover { background: #eef5fb; }
+  button.ghost { border-color: var(--line); color: var(--muted); background: #fff; }
+  button.ghost:hover { background: #f4f7fa; }
+  button:disabled { opacity: .6; cursor: wait; }
+
+  @media (max-width: 520px) {
+    .soap { grid-template-columns: 40px 1fr; }
+    .soap .letter { font-size: 22px; }
+    header.top .crumb { display: none; }
+  }
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="brand">PEC <span>| Prontuário Eletrônico</span></div>
+  <div class="crumb">Atenção Básica › Atendimento individual › SOAP</div>
+</header>
+
+<main>
+  <h1>Registro SOAP</h1>
+  <p class="sub">Preencha os quatro campos. Para treino acadêmico, identifique o paciente apenas por iniciais e não inclua dados que permitam reconhecê-lo.</p>
+
+  <section class="panel">
+    <div class="head">Identificação do atendimento</div>
+    <div class="ident">
+      <div><label class="f" for="paciente">Paciente (iniciais)</label><input type="text" id="paciente" maxlength="40"></div>
+      <div><label class="f" for="idade">Idade / sexo</label><input type="text" id="idade" maxlength="30" placeholder="Ex.: 54 anos, feminino"></div>
+      <div><label class="f" for="data">Data do atendimento</label><input type="date" id="data"></div>
+      <div><label class="f" for="estudante">Estudante</label><input type="text" id="estudante" maxlength="60"></div>
+      <div><label class="f" for="unidade">Unidade / serviço</label><input type="text" id="unidade" maxlength="60"></div>
+    </div>
+  </section>
+
+  <section class="panel soap S">
+    <div class="letter" aria-hidden="true">S</div>
+    <div class="body">
+      <div class="title"><strong>Subjetivo</strong><span class="count" data-for="s"></span></div>
+      <p class="hint">Queixa principal, história da doença atual, antecedentes, hábitos e o que o paciente relata.</p>
+      <textarea id="s" aria-label="Subjetivo"></textarea>
+    </div>
+  </section>
+
+  <section class="panel soap O">
+    <div class="letter" aria-hidden="true">O</div>
+    <div class="body">
+      <div class="title"><strong>Objetivo</strong><span class="count" data-for="o"></span></div>
+      <p class="hint">Sinais vitais, exame físico, resultados de exames e dados aferidos no atendimento.</p>
+      <textarea id="o" aria-label="Objetivo"></textarea>
+    </div>
+  </section>
+
+  <section class="panel soap A">
+    <div class="letter" aria-hidden="true">A</div>
+    <div class="body">
+      <div class="title"><strong>Avaliação</strong><span class="count" data-for="a"></span></div>
+      <p class="hint">Problemas e condições avaliadas, hipóteses diagnósticas (CID-10 / CIAP-2), risco e estratificação.</p>
+      <textarea id="a" aria-label="Avaliação"></textarea>
+    </div>
+  </section>
+
+  <section class="panel soap P">
+    <div class="letter" aria-hidden="true">P</div>
+    <div class="body">
+      <div class="title"><strong>Plano</strong><span class="count" data-for="p"></span></div>
+      <p class="hint">Condutas, prescrição, solicitação de exames, orientações, encaminhamentos e retorno.</p>
+      <textarea id="p" aria-label="Plano"></textarea>
+    </div>
+  </section>
+</main>
+
+<div class="bar">
+  <span class="status" id="status" role="status" aria-live="polite">Rascunho salvo neste navegador automaticamente.</span>
+  <button class="ghost" id="btnLimpar" type="button">Limpar</button>
+  <button class="sec" id="btnDrive" type="button">Salvar no Google Drive</button>
+  <button id="btnDocx" type="button">Baixar .docx</button>
+</div>
+
+<script>
+  /* ============ CONFIGURAÇÃO DO GOOGLE DRIVE ============
+     Para salvar direto no Drive, crie um "ID do cliente OAuth" (tipo Aplicativo da Web)
+     no Google Cloud Console, ative a Google Drive API e cole o ID abaixo.
+     Adicione a origem onde a página será aberta em "Origens JavaScript autorizadas".
+     Sem o ID, o botão baixa o .docx e abre o Drive para você arrastar o arquivo. */
+  const GOOGLE_CLIENT_ID = "";
+  /* ===================================================== */
+
+  const $ = id => document.getElementById(id);
+  const fields = ["paciente","idade","data","estudante","unidade","s","o","a","p"];
+  const KEY = "soap-pec-rascunho";
+  const statusEl = $("status");
+
+  function setStatus(msg, cls) {
+    statusEl.textContent = msg;
+    statusEl.className = "status" + (cls ? " " + cls : "");
+  }
+
+  function updateCounts() {
+    document.querySelectorAll(".count").forEach(el => {
+      const n = $(el.dataset.for).value.length;
+      el.textContent = n ? n + " caracteres" : "";
+    });
+  }
+
+  function save() {
+    try {
+      const data = {};
+      fields.forEach(f => data[f] = $(f).value);
+      localStorage.setItem(KEY, JSON.stringify(data));
+    } catch (e) {}
+  }
+
+  function load() {
+    try {
+      const raw = localStorage.getItem(KEY);
+      if (raw) {
+        const d = JSON.parse(raw);
+        fields.forEach(f => { if (typeof d[f] === "string") $(f).value = d[f]; });
+      }
+    } catch (e) {}
+    if (!$("data").value) $("data").value = new Date().toISOString().slice(0, 10);
+    updateCounts();
+  }
+
+  fields.forEach(f => $(f).addEventListener("input", () => { save(); updateCounts(); }));
+
+  $("btnLimpar").addEventListener("click", () => {
+    if (!confirm("Apagar todos os campos deste registro?")) return;
+    fields.forEach(f => $(f).value = "");
+    $("data").value = new Date().toISOString().slice(0, 10);
+    save(); updateCounts();
+    setStatus("Campos limpos.");
+  });
+
+  const SECTIONS = [
+    ["S", "Subjetivo", "s"],
+    ["O", "Objetivo", "o"],
+    ["A", "Avaliação", "a"],
+    ["P", "Plano", "p"]
+  ];
+
+  function fmtDate(iso) {
+    if (!iso) return "";
+    const [y, m, d] = iso.split("-");
+    return `${d}/${m}/${y}`;
+  }
+
+  function identLines() {
+    return [
+      ["Paciente", $("paciente").value],
+      ["Idade / sexo", $("idade").value],
+      ["Data do atendimento", fmtDate($("data").value)],
+      ["Estudante", $("estudante").value],
+      ["Unidade / serviço", $("unidade").value]
+    ].filter(x => x[1].trim());
+  }
+
+  function fileName() {
+    const ini = $("paciente").value.trim().replace(/[^\p{L}\p{N}]+/gu, "-").replace(/^-|-$/g, "");
+    return `SOAP${ini ? "-" + ini : ""}-${$("data").value || "sem-data"}`;
+  }
+
+  async function buildDocxBlob() {
+    const { Document, Packer, Paragraph, TextRun, HeadingLevel, BorderStyle } = window.docx;
+    const kids = [
+      new Paragraph({ heading: HeadingLevel.HEADING_1, children: [new TextRun({ text: "Registro SOAP – Atenção Básica", bold: true, color: "0F3D63" })] })
+    ];
+    identLines().forEach(([k, v]) => kids.push(new Paragraph({
+      spacing: { after: 40 },
+      children: [new TextRun({ text: k + ": ", bold: true }), new TextRun(v)]
+    })));
+    SECTIONS.forEach(([letter, name, id]) => {
+      kids.push(new Paragraph({
+        heading: HeadingLevel.HEADING_2,
+        spacing: { before: 280, after: 80 },
+        border: { bottom: { style: BorderStyle.SINGLE, size: 6, color: "1B6CA8", space: 2 } },
+        children: [new TextRun({ text: `${letter} – ${name}`, bold: true, color: "1B6CA8" })]
+      }));
+      const text = $(id).value.trim();
+      if (!text) {
+        kids.push(new Paragraph({ children: [new TextRun({ text: "Não preenchido.", italics: true, color: "888888" })] }));
+      } else {
+        text.split(/\n/).forEach(line => kids.push(new Paragraph({ spacing: { after: 60 }, children: [new TextRun(line)] })));
+      }
+    });
+    const doc = new Document({
+      styles: { default: { document: { run: { font: "Calibri", size: 22 } } } },
+      sections: [{ children: kids }]
+    });
+    return Packer.toBlob(doc);
+  }
+
+  function download(blob, name) {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = name;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 2000);
+  }
+
+  $("btnDocx").addEventListener("click", async () => {
+    if (!window.docx) { setStatus("Biblioteca de geração do .docx não carregou. Verifique a conexão.", "err"); return; }
+    try {
+      download(await buildDocxBlob(), fileName() + ".docx");
+      setStatus("Arquivo .docx baixado. Abra no Word ou no Google Docs.", "ok");
+    } catch (e) {
+      setStatus("Não foi possível gerar o .docx.", "err");
+    }
+  });
+
+  /* ---------- Google Drive ---------- */
+  function esc(s) {
+    return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  }
+
+  function buildHtml() {
+    let h = '<html><head><meta charset="utf-8"></head><body style="font-family:Calibri,Arial,sans-serif">';
+    h += '<h1 style="color:#0f3d63">Registro SOAP – Atenção Básica</h1>';
+    identLines().forEach(([k, v]) => h += `<p><b>${esc(k)}:</b> ${esc(v)}</p>`);
+    SECTIONS.forEach(([l, n, id]) => {
+      h += `<h2 style="color:#1b6ca8">${l} – ${n}</h2>`;
+      const t = $(id).value.trim();
+      h += t ? t.split(/\n/).map(x => `<p>${esc(x)}</p>`).join("") : "<p><i>Não preenchido.</i></p>";
+    });
+    return h + "</body></html>";
+  }
+
+  function loadGis() {
+    return new Promise((resolve, reject) => {
+      if (window.google && google.accounts && google.accounts.oauth2) return resolve();
+      const s = document.createElement("script");
+      s.src = "https://accounts.google.com/gsi/client";
+      s.onload = resolve; s.onerror = () => reject(new Error("gis"));
+      document.head.appendChild(s);
+    });
+  }
+
+  function getToken() {
+    return new Promise((resolve, reject) => {
+      const client = google.accounts.oauth2.initTokenClient({
+        client_id: GOOGLE_CLIENT_ID,
+        scope: "https://www.googleapis.com/auth/drive.file",
+        callback: r => r.access_token ? resolve(r.access_token) : reject(new Error(r.error || "auth")),
+        error_callback: e => reject(new Error(e.type || "auth"))
+      });
+      client.requestAccessToken();
+    });
+  }
+
+  async function uploadToDrive() {
+    await loadGis();
+    const token = await getToken();
+    const boundary = "soap" + Date.now();
+    const meta = { name: fileName(), mimeType: "application/vnd.google-apps.document" };
+    const body =
+      `--${boundary}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n${JSON.stringify(meta)}\r\n` +
+      `--${boundary}\r\nContent-Type: text/html; charset=UTF-8\r\n\r\n${buildHtml()}\r\n--${boundary}--`;
+    const res = await fetch("https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,webViewLink", {
+      method: "POST",
+      headers: { Authorization: "Bearer " + token, "Content-Type": "multipart/related; boundary=" + boundary },
+      body
+    });
+    if (!res.ok) throw new Error("upload " + res.status);
+    return res.json();
+  }
+
+  $("btnDrive").addEventListener("click", async () => {
+    const btn = $("btnDrive");
+    if (!GOOGLE_CLIENT_ID) {
+      try { download(await buildDocxBlob(), fileName() + ".docx"); } catch (e) {}
+      window.open("https://drive.google.com/drive/my-drive", "_blank", "noopener");
+      setStatus("Arquivo baixado. Arraste o .docx para o Drive que abriu (ou configure o ID do cliente para salvar direto).", "ok");
+      return;
+    }
+    btn.disabled = true;
+    setStatus("Conectando ao Google Drive…");
+    try {
+      const file = await uploadToDrive();
+      setStatus("Salvo no Google Drive como Google Docs.", "ok");
+      if (file.webViewLink) window.open(file.webViewLink, "_blank", "noopener");
+    } catch (e) {
+      setStatus("Não foi possível salvar no Drive. Confira a autorização e tente de novo.", "err");
+    } finally {
+      btn.disabled = false;
+    }
+  });
+
+  load();
+</script>
+</body>
+</html>
