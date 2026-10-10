@@ -127,6 +127,10 @@
     .soap { grid-template-columns: 40px 1fr; }
     .soap .letter { font-size: 22px; }
     header.top .crumb { display: none; }
+    header.top { padding: 0 10px; gap: 8px; }
+    header.top .navlink { padding: 5px 8px; font-size: 12px; }
+    header.top .brand span { display: none; }
+    header.top .crumb + .navlink { margin-left: auto; }
   }
 </style>
 </head>
@@ -134,7 +138,8 @@
 <header class="top">
   <div class="brand">PEC <span>| Prontuário Eletrônico</span></div>
   <div class="crumb">Atenção Básica › Atendimento individual › SOAP</div>
-  <a class="navlink" href="https://minhaubs.vercel.app/dosesped.html/">Doses em pediatria</a>
+  <a class="navlink" href="pediatria/">Doses em pediatria</a>
+  <a class="navlink" href="ginecologia/">Anamnese GO</a>
 </header>
 
 <main>
