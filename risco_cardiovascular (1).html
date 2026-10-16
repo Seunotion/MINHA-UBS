@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Estratificação de risco cardiovascular</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --nav: #0f3d63; --primary: #1b6ca8; --primary-d: #14527f; --teal: #12a1a6;
+    --bg: #eceff3; --card: #fff; --line: #cfd6de; --text: #27323d; --muted: #66727f;
+    --extremo: #7f1020; --muito: #c62828; --alto: #d9730d; --inter: #b58900; --baixo: #2e7d32;
+    box-sizing: border-box;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-padding-top: 130px; }
+  body { margin: 0; background: var(--bg); color: var(--text); font-family: "Open Sans","Segoe UI",Roboto,Arial,sans-serif; font-size: 15px; line-height: 1.5; }
+
+  header.top { position: sticky; top: 0; z-index: 20; background: var(--nav); color: #fff; display: flex; align-items: center; gap: 16px; padding: env(safe-area-inset-top, 0px) 20px 0; height: calc(52px + env(safe-area-inset-top, 0px)); border-bottom: 3px solid var(--teal); }
+  header.top .brand { font-weight: 700; font-size: 17px; white-space: nowrap; }
+  header.top .brand span { font-weight: 400; opacity: .8; }
+  header.top a.back { margin-left: auto; color: #fff; text-decoration: none; font-size: 13.5px; font-weight: 600; padding: 6px 12px; border: 1px solid rgba(255,255,255,.45); border-radius: 3px; white-space: nowrap; }
+  header.top a.back:hover { background: rgba(255,255,255,.12); }
+
+  .steps { position: sticky; top: calc(52px + env(safe-area-inset-top, 0px)); z-index: 15; background: #f4f7fa; border-bottom: 1px solid var(--line); padding: 8px 16px; }
+  .steps ol { list-style: none; margin: 0 auto; padding: 0; max-width: 860px; display: flex; gap: 6px; overflow-x: auto; scrollbar-width: thin; }
+  .steps li { flex: 1 0 auto; display: flex; align-items: center; gap: 7px; font-size: 12.5px; font-weight: 600; color: var(--muted); background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 3px 12px 3px 4px; white-space: nowrap; }
+  .steps li .n { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; border-radius: 50%; background: #e3e8ee; color: var(--muted); font-size: 12px; }
+  .steps li.done .n { background: var(--teal); color: #fff; }
+  .steps li.cur { color: var(--nav); border-color: var(--primary); background: #eaf3fb; }
+  .steps li.cur .n { background: var(--primary); color: #fff; }
+  .steps li.skip { opacity: .5; }
+
+  main { padding: 20px 16px 60px; }
+  .wrap { max-width: 860px; margin: 0 auto; }
+  h1 { font-size: 20px; margin: 4px 0 2px; color: var(--nav); }
+  .sub { color: var(--muted); margin: 0 0 16px; font-size: 13.5px; }
+
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 3px; margin-bottom: 14px; }
+  .chead { background: #f4f7fa; border-bottom: 1px solid var(--line); border-left: 4px solid var(--primary); padding: 10px 14px; }
+  .chead h2 { margin: 0; font-size: 16px; color: var(--nav); }
+  .cbody { padding: 14px; }
+  .rule { background: #eaf3fb; border: 1px solid #bcd6ec; border-radius: 3px; padding: 9px 12px; font-size: 14px; margin-bottom: 14px; }
+  .tip { background: #fff7e6; border: 1px solid #e0b050; border-radius: 3px; padding: 9px 12px; font-size: 13.5px; margin: 12px 0 0; }
+  .foot { font-size: 12.5px; color: var(--muted); margin: 12px 0 0; }
+  .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  @media (max-width: 720px) { .cols { grid-template-columns: 1fr; } }
+
+  fieldset { border: 0; margin: 0 0 6px; padding: 0; min-width: 0; }
+  legend { font-weight: 700; color: var(--nav); font-size: 14px; padding: 0; margin-bottom: 6px; border-bottom: 2px solid var(--teal); display: block; width: 100%; padding-bottom: 3px; }
+  .sg { font-weight: 700; font-size: 13px; color: var(--muted); margin: 10px 0 2px; }
+
+  .ck { position: relative; display: flex; align-items: flex-start; gap: 9px; padding: 5px 0; cursor: pointer; font-size: 14.5px; }
+  .ck input { position: absolute; opacity: 0; width: 19px; height: 19px; margin: 0; cursor: pointer; }
+  .bx { flex: none; position: relative; width: 19px; height: 19px; margin-top: 2px; border: 2px solid var(--primary); background: #fff; }
+  .ck input[type=checkbox] + .bx { border-radius: 3px; }
+  .ck input[type=radio] + .bx { border-radius: 50%; }
+  .ck input[type=checkbox]:checked + .bx::after { content: "✕"; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: var(--primary-d); font-weight: 700; font-size: 13px; line-height: 1; }
+  .ck input[type=radio]:checked + .bx::after { content: ""; position: absolute; inset: 3px; border-radius: 50%; background: var(--primary); }
+  .ck input:focus-visible + .bx { outline: 2px solid var(--nav); outline-offset: 2px; }
+  .ck input:checked ~ span.t { font-weight: 600; }
+
+  .counter { margin-top: 12px; padding: 8px 12px; border-radius: 3px; background: #f4f7fa; border: 1px solid var(--line); font-size: 14px; }
+  .counter.hit { background: #fdeaea; border-color: #e3a0a0; color: #7a1c1c; font-weight: 600; }
+  .in { padding: 8px 10px; font: inherit; border: 1px solid var(--line); border-radius: 3px; background: #fff; color: var(--text); width: 140px; }
+  .in:focus, button:focus-visible, a:focus-visible { outline: 2px solid var(--primary); outline-offset: 1px; border-color: var(--primary); }
+  .inl { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: 6px 0 4px; }
+
+  .actions { display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap; margin-top: 4px; }
+  button { font: inherit; font-weight: 600; cursor: pointer; padding: 9px 18px; border-radius: 3px; border: 1px solid var(--primary); background: var(--primary); color: #fff; }
+  button:hover { background: var(--primary-d); }
+  button.sec { background: #fff; color: var(--primary); }
+  button.sec:hover { background: #eef5fb; }
+  .msg { color: #b3261e; font-size: 13.5px; margin: 8px 0 0; }
+
+  .banner { border-radius: 3px; color: #fff; padding: 18px 18px 16px; margin-bottom: 14px; }
+  .banner .k { font-size: 13px; opacity: .9; letter-spacing: .3px; text-transform: uppercase; }
+  .banner .v { font-size: 28px; font-weight: 700; line-height: 1.15; margin: 2px 0 4px; }
+  .banner .d { font-size: 14.5px; }
+  .b-extremo { background: var(--extremo); } .b-muito { background: var(--muito); } .b-alto { background: var(--alto); }
+  .b-inter { background: var(--inter); } .b-baixo { background: var(--baixo); } .b-inc { background: #5b6672; }
+  .why { margin: 0; padding-left: 20px; } .why li { padding: 2px 0; }
+  .sum h3 { margin: 12px 0 3px; font-size: 13.5px; color: var(--nav); }
+  .sum p { margin: 0; font-size: 14px; color: var(--text); }
+  .sum .none { color: var(--muted); }
+  .src { font-size: 12.5px; color: var(--muted); margin-top: 18px; }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="brand">PEC <span>| Prontuário Eletrônico</span></div>
+  <a class="back" href="../minhaubs.html">Voltar ao registro SOAP</a>
+</header>
+
+<div class="steps"><ol id="steps" aria-label="Passos"></ol></div>
+
+<main>
+  <div class="wrap">
+    <h1>Estratificação de risco cardiovascular</h1>
+    <p class="sub">Responda passo a passo, seguindo o fluxograma de 5 passos. O escore PREVENT deve ser calculado por fora e informado no 4º passo.</p>
+    <div id="view"></div>
+    <p class="src">Ferramenta de estudo baseada no fluxograma &ldquo;Estratificação de risco cardiovascular – resumo em 5 passos&rdquo;. Confirme classificações e condutas na diretriz vigente.</p>
+  </div>
+</main>
+
+<script>
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+  const EV = [
+    "SCA recente (últimos 12 meses)",
+    "Histórico de infarto do miocárdio",
+    "Histórico de AVC isquêmico",
+    "Doença arterial periférica sintomática (claudicação com ITB < 0,85, revascularização ou amputação prévia)"
+  ];
+  const HC = [
+    "Idade ≥ 65 anos",
+    "Hipercolesterolemia familiar",
+    "Histórico de cirurgia de revascularização do miocárdio prévia ou angioplastia",
+    "Diabetes",
+    "Hipertensão arterial",
+    "Doença renal crônica (TFGe 15–59 mL/min/1,73 m²)",
+    "Tabagismo atual",
+    "LDL-c persistentemente elevado (≥ 100 mg/dL) apesar de estatina na dose máxima tolerada + ezetimiba",
+    "Evento agudo aterosclerótico com menos de 2 anos"
+  ];
+  const S2 = ["Estenose arterial ≥ 50%", "CAC > 300 UA"];
+  const EAR = [
+    "DM2 há mais de 10 anos",
+    "História familiar de DAC prematura",
+    "Hipertensão arterial",
+    "Tabagismo ativo",
+    "Síndrome metabólica",
+    "Neuropatia autonômica cardiovascular incipiente",
+    "Retinopatia diabética leve",
+    "TFG < 60 mL/min",
+    "Placa carotídea < 50%",
+    "Aneurisma de aorta abdominal",
+    "CAC entre 10–300 UA",
+    "Placa aterosclerótica na angio-TC de coronárias < 50%"
+  ];
+  const AS = [
+    "Aumento do LDL ≥ 190 mg/dL",
+    "Aumento da Lp(a) > 180 mg/dL",
+    "Aneurisma de aorta abdominal",
+    "Aterosclerose subclínica (placa em carótidas, ITB/doença arterial periférica, coronárias: CAC, angiotomografia)"
+  ];
+  const AGR = [
+    { g: null, items: [
+      "História familiar de DAC prematura (parente de 1º grau com evento < 55 anos [homem] ou < 65 anos [mulher])",
+      "Adiposidade e manifestações (esteatose hepática, especialmente com fibrose, e síndrome metabólica)",
+      "Condições inflamatórias crônicas (artrite reumatoide, psoríase, lúpus, retocolite ulcerativa, doença de Crohn, HIV crônico)",
+      "Transplante de órgãos (ex.: coração, fígado, rim)"
+    ]},
+    { g: "Específicos das mulheres", items: [
+      "Menarca precoce (≤ 12 anos) ou tardia (≥ 17 anos)",
+      "Pré-eclâmpsia, eclâmpsia, hipertensão gestacional ou diabetes gestacional",
+      "Parto prematuro",
+      "Restrição de crescimento intrauterino",
+      "Abortos de repetição (≥ 3 perdas espontâneas)",
+      "Menopausa precoce (< 40 anos)"
+    ]},
+    { g: null, items: [
+      "Lipoproteína(a) ≥ 50 mg/dL ou ≥ 125 nmol/L",
+      "PCR-ultrassensível ≥ 2,0 mg/L"
+    ]}
+  ];
+  const AGR_FLAT = AGR.flatMap(x => x.items);
+
+  const STEP_NAMES = ["Risco extremo", "Muito alto risco", "Diabetes tipo 2?", "Os 6 As do alto risco", "Resultado"];
+
+  const blank = n => Array(n).fill(false);
+  function fresh() {
+    return { step: 1, hist: [1], visited: new Set([1]), ev: blank(EV.length), hc: blank(HC.length), s2: blank(S2.length),
+             dm: null, ear: blank(EAR.length), as: blank(AS.length), agr: blank(AGR_FLAT.length), prevent: "", earPre: false };
+  }
+  let a = fresh();
+  const cnt = arr => arr.filter(Boolean).length;
+  const picked = (list, arr) => list.filter((_, i) => arr[i]);
+
+  function prevVal() {
+    const n = parseFloat(String(a.prevent).replace(",", "."));
+    return isNaN(n) ? NaN : n;
+  }
+
+  /* ---------- lógica de classificação (conforme o fluxograma) ---------- */
+  function step1() {
+    const m = cnt(a.ev), h = cnt(a.hc);
+    const multi = m >= 2, comb = m >= 1 && h >= 2;
+    return { ok: multi || comb, m, h, multi, comb };
+  }
+
+  function finalResult() {
+    const r1 = step1();
+    if (r1.ok) {
+      const why = [];
+      if (r1.multi) why.push("Múltiplos eventos cardiovasculares maiores (" + r1.m + " marcados): " + picked(EV, a.ev).join("; ") + ".");
+      if (r1.comb) why.push("1 evento maior + 2 ou mais condições de alto risco (" + r1.h + " marcadas).");
+      return { key: "extremo", label: "Risco extremo", desc: "1º passo: critério de risco extremo atendido.", why };
+    }
+    if (a.s2.some(Boolean)) {
+      return { key: "muito", label: "Muito alto risco", desc: "2º passo: critério de muito alto risco atendido.",
+               why: picked(S2, a.s2).map(x => x + ".") };
+    }
+    if (a.dm === "sim") {
+      const ev = step1().m >= 1, ear = cnt(a.ear);
+      if (ev || ear >= 3) {
+        const why = ["Paciente com DM2."];
+        if (ev) why.push("Evento cardiovascular maior presente (passo 1).");
+        if (ear >= 3) why.push(ear + " estratificadores de alto risco (EAR), ou seja, ≥ 3.");
+        return { key: "muito", label: "Muito alto risco", desc: "3º passo: DM2 com evento cardiovascular ou ≥ 3 EAR.", why };
+      }
+      return { key: "alto", label: "Alto risco", desc: "3º passo: DM2 sem evento cardiovascular e com menos de 3 EAR.",
+               why: ["Paciente com DM2, " + ear + " EAR marcado(s) (< 3) e sem evento cardiovascular.", "Dica de prova: paciente diabético terá, no mínimo, ALTO RISCO."] };
+    }
+    // 4º e 5º passos
+    const asHit = picked(AS, a.as), p = prevVal();
+    const why = [];
+    asHit.forEach(x => why.push(x + "."));
+    if (p > 20) why.push("PREVENT > 20% (informado: " + String(a.prevent).trim() + "%): alto escore de risco.");
+    if (why.length) return { key: "alto", label: "Alto risco", desc: "4º passo: preenche pelo menos um dos 6 As do alto risco.", why };
+
+    if (step1().m >= 1) {
+      return { key: "inc", label: "Combinação não definida no fluxograma",
+        desc: "Há evento cardiovascular maior marcado, sem critério de risco extremo, muito alto risco ou dos 6 As.",
+        why: ["Evento(s) maior(es): " + picked(EV, a.ev).join("; ") + ".", "Condições de alto risco marcadas: " + step1().h + " (o risco extremo exige 2 ou mais junto com 1 evento maior).", "O fluxograma não indica a classificação para esta combinação em paciente sem DM2; reveja os dados e confirme na diretriz."] };
+    }
+    const agr = cnt(a.agr);
+    if (isNaN(p)) return { key: "inc", label: "Informe o escore PREVENT", desc: "Para concluir entre baixo, intermediário e alto risco, calcule o PREVENT por fora e informe o valor no 4º passo.", why: [] };
+    const pTxt = "PREVENT informado: " + String(a.prevent).trim() + "%.";
+    if (agr > 0) {
+      if (p < 5) return { key: "inter", label: "Risco intermediário", desc: "Os fatores agravantes reclassificam o risco: baixo → intermediário.",
+        why: [pTxt, "Fator(es) agravante(s) marcado(s) (" + agr + "): " + picked(AGR_FLAT, a.agr).join("; ") + "."] };
+      return { key: "alto", label: "Alto risco", desc: "Os fatores agravantes reclassificam o risco: intermediário → alto.",
+        why: [pTxt, "Fator(es) agravante(s) marcado(s) (" + agr + "): " + picked(AGR_FLAT, a.agr).join("; ") + "."] };
+    }
+    if (p < 5) return { key: "baixo", label: "Baixo risco", desc: "5º passo: critérios de baixo risco atendidos.",
+      why: ["Escore PREVENT < 5% (informado: " + String(a.prevent).trim() + "%).", "Ausência de fatores agravantes.", "Sem diabetes."] };
+    return { key: "inter", label: "Risco intermediário", desc: "Não atende aos critérios de baixo risco nem aos dos 6 As (classificação por exclusão).",
+      why: [pTxt, "Sem 6 As do alto risco, sem fatores agravantes e sem diabetes.", "Observação: o fluxograma não detalha a faixa intermediária; aqui ela é obtida por exclusão."] };
+  }
+
+  /* ---------- componentes ---------- */
+  function checks(list, arr, onChange) {
+    const box = document.createElement("div");
+    list.forEach((txt, i) => {
+      const l = document.createElement("label"); l.className = "ck";
+      l.innerHTML = '<input type="checkbox"><span class="bx" aria-hidden="true"></span><span class="t">' + esc(txt) + "</span>";
+      const inp = l.querySelector("input"); inp.checked = !!arr[i];
+      inp.addEventListener("change", () => { arr[i] = inp.checked; if (onChange) onChange(); });
+      box.appendChild(l);
+    });
+    return box;
+  }
+
+  function fieldset(title, content) {
+    const f = document.createElement("fieldset");
+    const lg = document.createElement("legend"); lg.textContent = title;
+    f.appendChild(lg); f.appendChild(content); return f;
+  }
+
+  function card(title) {
+    const c = document.createElement("section"); c.className = "card";
+    c.innerHTML = '<div class="chead"><h2>' + esc(title) + '</h2></div><div class="cbody"></div>';
+    return { el: c, body: c.querySelector(".cbody") };
+  }
+
+  function html(tag, cls, inner) { const e = document.createElement(tag); if (cls) e.className = cls; if (inner !== undefined) e.innerHTML = inner; return e; }
+
+  function actions(back, nextLabel, onNext) {
+    const d = html("div", "actions");
+    if (back) { const b = html("button", "sec", "Voltar"); b.type = "button"; b.addEventListener("click", goBack); d.appendChild(b); }
+    const n = html("button", null, esc(nextLabel)); n.type = "button"; n.addEventListener("click", onNext); d.appendChild(n);
+    return d;
+  }
+
+  /* ---------- navegação ---------- */
+  function go(step) { a.step = step; a.visited.add(step); if (a.hist[a.hist.length - 1] !== step) a.hist.push(step); render(); window.scrollTo(0, 0); }
+  function goBack() { if (a.hist.length > 1) { a.hist.pop(); a.step = a.hist[a.hist.length - 1]; render(); window.scrollTo(0, 0); } }
+
+  function renderSteps() {
+    const ol = $("steps"); ol.innerHTML = "";
+    STEP_NAMES.forEach((n, i) => {
+      const num = i + 1; const li = document.createElement("li");
+      const cur = a.step === num, done = a.visited.has(num) && !cur;
+      li.className = (cur ? "cur" : "") + (done ? " done" : "") + (!cur && !done && a.step === 5 ? " skip" : "");
+      if (cur) li.setAttribute("aria-current", "step");
+      li.innerHTML = '<span class="n">' + (done ? "✓" : num) + "</span>" + esc(n);
+      ol.appendChild(li);
+    });
+  }
+
+  /* ---------- telas ---------- */
+  function viewStep1() {
+    const c = card("1º passo – Risco extremo");
+    c.body.appendChild(html("div", "rule", "<b>Risco extremo</b> = múltiplos eventos cardiovasculares maiores <b>OU</b> 1 evento maior + 2 ou mais condições de alto risco."));
+    const counter = html("div", "counter");
+    const upd = () => {
+      const r = step1();
+      counter.className = "counter" + (r.ok ? " hit" : "");
+      counter.textContent = "Eventos maiores: " + r.m + "  |  Condições de alto risco: " + r.h + (r.ok ? "  →  critério de risco extremo atendido" : "");
+    };
+    const cols = html("div", "cols");
+    cols.appendChild(fieldset("Eventos cardiovasculares maiores", checks(EV, a.ev, upd)));
+    cols.appendChild(fieldset("Condições de alto risco", checks(HC, a.hc, upd)));
+    c.body.appendChild(cols);
+    c.body.appendChild(html("p", "foot", "SCA = síndrome coronariana aguda | AVC = acidente vascular cerebral | ITB = índice tornozelo-braquial."));
+    c.body.appendChild(counter); upd();
+    c.body.appendChild(html("div", null, "<div style='height:12px'></div>"));
+    c.body.appendChild(actions(false, "Continuar", () => step1().ok ? go(5) : go(2)));
+    return c.el;
+  }
+
+  function viewStep2() {
+    const c = card("2º passo – Muito alto risco");
+    c.body.appendChild(html("div", "rule", "Qualquer um dos achados abaixo classifica o paciente como <b>muito alto risco</b>."));
+    c.body.appendChild(fieldset("Achados", checks(S2, a.s2)));
+    c.body.appendChild(html("div", null, "<div style='height:12px'></div>"));
+    c.body.appendChild(actions(true, "Continuar", () => a.s2.some(Boolean) ? go(5) : go(3)));
+    return c.el;
+  }
+
+  function viewStep3() {
+    const c = card("3º passo – Diabetes tipo 2?");
+    if (!a.earPre) { // pré-marca itens já informados no passo 1 (apenas na primeira entrada)
+      if (a.hc[3] && a.dm === null) a.dm = "sim";
+      if (a.hc[4]) a.ear[2] = true;
+      if (a.hc[6]) a.ear[3] = true;
+      a.earPre = true;
+    }
+    const wrap = html("div");
+    const q = html("div", "inl", "<b>Paciente tem DM2?</b>");
+    ["sim", "nao"].forEach(v => {
+      const l = html("label", "ck", '<input type="radio" name="dm"><span class="bx" aria-hidden="true"></span><span class="t">' + (v === "sim" ? "Sim" : "Não") + "</span>");
+      const inp = l.querySelector("input"); inp.checked = a.dm === v;
+      inp.addEventListener("change", () => { a.dm = v; draw(); });
+      q.appendChild(l);
+    });
+    wrap.appendChild(q);
+    const dyn = html("div"); wrap.appendChild(dyn);
+    const msg = html("p", "msg"); msg.style.display = "none";
+    function draw() {
+      dyn.innerHTML = ""; msg.style.display = "none";
+      if (a.dm === "nao") {
+        dyn.appendChild(html("div", "rule", "Seguir para o 4º passo (6 As do alto risco)."));
+      } else if (a.dm === "sim") {
+        const m = step1().m;
+        dyn.appendChild(html("div", "rule", "<b>Evento cardiovascular ou ≥ 3 estratificadores de alto risco (EAR)?</b><br>Sim → muito alto risco. Não → alto risco. Os eventos cardiovasculares são os apresentados no passo 1 (marcados lá: " + m + ")."));
+        const counter = html("div", "counter");
+        const upd = () => { const e = cnt(a.ear); counter.className = "counter" + (e >= 3 ? " hit" : ""); counter.textContent = "EAR marcados: " + e + (e >= 3 ? "  →  ≥ 3 EAR" : ""); };
+        dyn.appendChild(fieldset("Estratificadores de alto risco (EAR)", checks(EAR, a.ear, upd)));
+        dyn.appendChild(counter); upd();
+        dyn.appendChild(html("div", "tip", "<b>Dica de prova:</b> paciente diabético terá, no mínimo, ALTO RISCO."));
+      }
+    }
+    draw();
+    c.body.appendChild(wrap); c.body.appendChild(msg);
+    c.body.appendChild(html("div", null, "<div style='height:12px'></div>"));
+    c.body.appendChild(actions(true, "Continuar", () => {
+      if (a.dm === null) { msg.textContent = "Selecione Sim ou Não para continuar."; msg.style.display = "block"; return; }
+      a.dm === "sim" ? go(5) : go(4);
+    }));
+    return c.el;
+  }
+
+  function viewStep4() {
+    const c = card("4º passo – Os 6 As do alto risco");
+    c.body.appendChild(html("div", "rule", "Qualquer um dos <b>6 As</b> reconhece <b>ALTO RISCO</b>: aumento do LDL, aumento da Lp(a), aneurisma de aorta abdominal, aterosclerose subclínica, alto escore de risco e algum fator de risco agravante."));
+    c.body.appendChild(fieldset("Achados (4 primeiros As)", checks(AS, a.as)));
+
+    const pv = html("div");
+    pv.appendChild(html("div", "sg", "Alto escore de risco = PREVENT > 20%"));
+    const inl = html("div", "inl", '<label for="prevent"><b>Escore PREVENT (%)</b></label>');
+    const inp = html("input", "in"); inp.id = "prevent"; inp.type = "text"; inp.inputMode = "decimal"; inp.placeholder = "Ex.: 7,5"; inp.value = a.prevent;
+    const hint = html("span", "foot"); hint.style.margin = "0"; hint.textContent = "Calculado por fora; informe só o valor.";
+    inp.addEventListener("input", () => { a.prevent = inp.value; });
+    inl.appendChild(inp); inl.appendChild(hint); pv.appendChild(inl);
+    c.body.appendChild(pv);
+
+    const agrBox = html("div");
+    let idx = 0;
+    AGR.forEach(grp => {
+      if (grp.g) agrBox.appendChild(html("div", "sg", grp.g));
+      grp.items.forEach(txt => {
+        const i = idx++;
+        const l = html("label", "ck", '<input type="checkbox"><span class="bx" aria-hidden="true"></span><span class="t">' + esc(txt) + "</span>");
+        const ci = l.querySelector("input"); ci.checked = !!a.agr[i];
+        ci.addEventListener("change", () => { a.agr[i] = ci.checked; });
+        agrBox.appendChild(l);
+      });
+    });
+    c.body.appendChild(html("div", null, "<div style='height:10px'></div>"));
+    c.body.appendChild(fieldset("Fatores agravantes de risco", agrBox));
+    c.body.appendChild(html("div", "tip", "Os fatores agravantes reclassificam o risco: baixo → intermediário; intermediário → alto; e assim sucessivamente.<br><b>Dica de prova:</b> a presença de algum fator agravante costuma empurrar o paciente para pelo menos risco intermediário, muitas vezes alto."));
+    c.body.appendChild(html("div", null, "<div style='height:12px'></div>"));
+    c.body.appendChild(actions(true, "Ver resultado", () => go(5)));
+    return c.el;
+  }
+
+  function summaryHtml() {
+    const parts = [];
+    const add = (title, items) => parts.push("<h3>" + esc(title) + "</h3>" + (items.length ? "<p>" + items.map(esc).join("; ") + ".</p>" : '<p class="none">Nenhum marcado.</p>'));
+    if (a.visited.has(1)) { add("Eventos cardiovasculares maiores", picked(EV, a.ev)); add("Condições de alto risco", picked(HC, a.hc)); }
+    if (a.visited.has(2)) add("Muito alto risco (2º passo)", picked(S2, a.s2));
+    if (a.visited.has(3)) {
+      parts.push("<h3>Diabetes tipo 2</h3><p>" + (a.dm === "sim" ? "Sim" : "Não") + ".</p>");
+      if (a.dm === "sim") add("Estratificadores de alto risco (EAR)", picked(EAR, a.ear));
+    }
+    if (a.visited.has(4)) {
+      add("6 As (achados)", picked(AS, a.as));
+      parts.push("<h3>PREVENT</h3><p>" + (String(a.prevent).trim() ? esc(String(a.prevent).trim()) + "%" : '<span class="none">Não informado.</span>') + "</p>");
+      add("Fatores agravantes", picked(AGR_FLAT, a.agr));
+    }
+    return parts.join("");
+  }
+
+  function viewResult() {
+    const r = finalResult();
+    const cls = { extremo: "b-extremo", muito: "b-muito", alto: "b-alto", inter: "b-inter", baixo: "b-baixo", inc: "b-inc" }[r.key];
+    const wrap = html("div");
+    wrap.appendChild(html("div", "banner " + cls, '<div class="k">Classificação</div><div class="v">' + esc(r.label) + '</div><div class="d">' + esc(r.desc) + "</div>"));
+    if (r.why.length) {
+      const c = card("Por que esta classificação"); c.body.appendChild(html("ul", "why", r.why.map(x => "<li>" + esc(x) + "</li>").join(""))); wrap.appendChild(c.el);
+    }
+    const s = card("Resumo das respostas"); s.body.className = "cbody sum"; s.body.innerHTML = summaryHtml(); wrap.appendChild(s.el);
+    const act = html("div", "actions");
+    const b1 = html("button", "sec", r.key === "inc" ? "Voltar e informar o PREVENT" : "Voltar e editar"); b1.type = "button"; b1.addEventListener("click", goBack);
+    const b2 = html("button", null, "Nova avaliação"); b2.type = "button"; b2.addEventListener("click", () => { a = fresh(); render(); window.scrollTo(0, 0); });
+    act.appendChild(b1); act.appendChild(b2); wrap.appendChild(act);
+    return wrap;
+  }
+
+  function render() {
+    renderSteps();
+    const v = $("view"); v.innerHTML = "";
+    v.appendChild([null, viewStep1, viewStep2, viewStep3, viewStep4, viewResult][a.step]());
+  }
+
+  render();
+</script>
+</body>
+</html>
