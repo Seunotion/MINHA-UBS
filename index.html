@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Anamnese obstétrica – UESB</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.umd.js"></script>
+<style>
+  :root {
+    --nav: #b94b76; --nav-d: #9c3a62; --primary: #d1668e; --accent: #eaa0ba;
+    --bg: #fdf4f7; --card: #fff; --head: #fbe6ee; --line: #f1d0dc;
+    --text: #3b2b32; --muted: #86656f; --ok: #2e7d32; --err: #c62828;
+    box-sizing: border-box;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-padding-top: 120px; scroll-behavior: smooth; }
+  body { margin: 0; background: var(--bg); color: var(--text); font-family: "Open Sans","Segoe UI",Roboto,Arial,sans-serif; font-size: 15px; line-height: 1.5; }
+
+  header.top { position: sticky; top: 0; z-index: 20; background: var(--nav); color: #fff; display: flex; align-items: center; gap: 12px; padding: env(safe-area-inset-top, 0px) 18px 0; height: calc(58px + env(safe-area-inset-top, 0px)); border-bottom: 3px solid #f4b6cb; }
+  header.top .logo { height: 42px; width: auto; background: #fff; border-radius: 6px; padding: 2px 4px; }
+  header.top .brand { font-weight: 700; font-size: 17px; white-space: nowrap; }
+  header.top .brand span { font-weight: 400; opacity: .85; }
+  header.top .crumb { font-size: 13px; opacity: .85; margin-left: 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  header.top a.nav { margin-left: auto; color: #fff; text-decoration: none; font-size: 13.5px; font-weight: 600; padding: 6px 12px; border: 1px solid rgba(255,255,255,.55); border-radius: 3px; white-space: nowrap; }
+  header.top a.nav:hover { background: rgba(255,255,255,.14); }
+
+  .tools { position: sticky; top: calc(58px + env(safe-area-inset-top, 0px)); z-index: 15; background: #fbe9f0; border-bottom: 1px solid var(--line); padding: 8px 16px; }
+  .chips { display: flex; gap: 6px; overflow-x: auto; max-width: 980px; margin: 0 auto; scrollbar-width: thin; }
+  .chips a { flex: none; font-size: 12.5px; font-weight: 600; color: var(--nav-d); background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 3px 11px; text-decoration: none; white-space: nowrap; }
+  .chips a:hover { background: var(--head); }
+
+  main { padding: 20px 16px 130px; }
+  .wrap { max-width: 980px; margin: 0 auto; }
+  h1 { font-size: 20px; margin: 4px 0 2px; color: var(--nav-d); }
+  .sub { color: var(--muted); margin: 0 0 16px; font-size: 13.5px; }
+
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 3px; margin-bottom: 14px; }
+  .chead { background: var(--head); border-bottom: 1px solid var(--line); border-left: 4px solid var(--primary); padding: 9px 14px; }
+  .chead h2 { margin: 0; font-size: 14.5px; color: var(--nav-d); }
+  .cbody { padding: 12px 14px 14px; }
+  .row { display: flex; flex-wrap: wrap; gap: 10px 14px; margin-bottom: 10px; }
+  .row:last-child { margin-bottom: 0; }
+  .fld { min-width: 0; }
+  .fld.full { flex: 1 1 100%; }
+  .lbl { display: block; font-size: 12.5px; font-weight: 600; color: var(--muted); margin-bottom: 3px; }
+  .in { width: 100%; padding: 8px 10px; font: inherit; color: var(--text); background: #fff; border: 1px solid var(--line); border-radius: 3px; }
+  .ta { resize: none; overflow: hidden; min-height: 38px; display: block; }
+  .ta.big { resize: vertical; }
+  .in:focus, button:focus-visible, a:focus-visible, [role=tab]:focus-visible { outline: 2px solid var(--primary); outline-offset: 1px; border-color: var(--primary); }
+  .snote { margin: 8px 0 0; font-size: 12.5px; color: var(--muted); }
+  .sg { font-weight: 700; font-size: 13px; color: var(--nav-d); margin: 4px 0 8px; padding-bottom: 2px; border-bottom: 2px solid var(--accent); }
+
+  .cks { display: flex; flex-wrap: wrap; padding-top: 2px; }
+  .ck { position: relative; display: inline-flex; align-items: center; gap: 7px; margin-right: 18px; padding: 3px 0; cursor: pointer; font-size: 14.5px; }
+  .ck input { position: absolute; opacity: 0; width: 18px; height: 18px; margin: 0; cursor: pointer; }
+  .bx { flex: none; position: relative; width: 19px; height: 19px; border: 2px solid var(--primary); border-radius: 3px; background: #fff; }
+  .ck input:checked + .bx::after { content: "✕"; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: var(--nav-d); font-weight: 700; font-size: 13px; line-height: 1; }
+  .ck input:focus-visible + .bx { outline: 2px solid var(--nav); outline-offset: 2px; }
+
+  .bar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 12; background: #fff; border-top: 1px solid var(--line); padding: 10px 16px calc(10px + env(safe-area-inset-bottom, 0px)); display: flex; flex-wrap: wrap; gap: 10px; justify-content: flex-end; align-items: center; }
+  .bar .status { margin-right: auto; font-size: 13px; color: var(--muted); }
+  .bar .status.ok { color: var(--ok); }
+  .bar .status.err { color: var(--err); }
+  button { font: inherit; font-weight: 600; cursor: pointer; padding: 9px 16px; border-radius: 3px; border: 1px solid var(--nav); background: var(--nav); color: #fff; }
+  button:hover { background: var(--nav-d); }
+  button.sec { background: #fff; color: var(--nav-d); }
+  button.sec:hover { background: var(--head); }
+  button.ghost { border-color: var(--line); color: var(--muted); background: #fff; }
+  button.ghost:hover { background: #fdf4f7; }
+
+  #tabCola { position: fixed; right: 0; top: 40%; z-index: 18; writing-mode: vertical-rl; padding: 14px 9px; border-radius: 6px 0 0 6px; border-right: 0; letter-spacing: .3px; box-shadow: -2px 2px 8px rgba(120,40,70,.18); }
+  .drawer { position: fixed; top: 0; right: 0; bottom: 0; width: min(480px, 100%); z-index: 40; background: #fff; border-left: 1px solid var(--line); box-shadow: -4px 0 18px rgba(120,40,70,.18); transform: translateX(105%); transition: transform .22s ease; display: flex; flex-direction: column; visibility: hidden; }
+  .drawer.open { transform: none; visibility: visible; }
+  .dhead { display: flex; align-items: center; justify-content: space-between; gap: 10px; background: var(--nav); color: #fff; padding: calc(10px + env(safe-area-inset-top, 0px)) 14px 10px; }
+  .dhead h2 { margin: 0; font-size: 15px; }
+  .dhead button { background: transparent; border-color: rgba(255,255,255,.6); padding: 5px 11px; }
+  .dhead button:hover { background: rgba(255,255,255,.15); }
+  .dtabs { display: flex; flex-wrap: wrap; gap: 6px; padding: 10px 12px; background: #fbe9f0; border-bottom: 1px solid var(--line); max-height: 38vh; overflow-y: auto; }
+  .dtabs button { padding: 4px 11px; font-size: 12.8px; border-radius: 14px; background: #fff; color: var(--nav-d); border: 1px solid var(--line); }
+  .dtabs button:hover { background: var(--head); }
+  .dtabs button[aria-selected=true] { background: var(--nav); color: #fff; border-color: var(--nav); }
+  .dtabs .pri { border-color: var(--primary); }
+  .dtabs .sepl { flex-basis: 100%; font-size: 11.5px; color: var(--muted); margin: 2px 0 -2px; font-weight: 600; text-transform: uppercase; letter-spacing: .4px; }
+  .dbody { overflow-y: auto; padding: 12px 14px calc(24px + env(safe-area-inset-bottom, 0px)); }
+  .dpanel h3 { margin: 14px 0 6px; font-size: 14px; color: var(--nav-d); border-bottom: 2px solid var(--accent); padding-bottom: 3px; }
+  .dpanel h3:first-child { margin-top: 2px; }
+  .dpanel p { margin: 6px 0; font-size: 14px; }
+  .dpanel ul { margin: 4px 0 6px; padding-left: 20px; font-size: 14px; }
+  .dpanel li { padding: 1px 0; }
+  .dpanel .tip { background: #fff6e8; border: 1px solid #e6bf7a; border-radius: 3px; padding: 8px 12px; font-size: 13.2px; margin: 10px 0; }
+  .dpanel .tw { overflow-x: auto; margin: 6px 0 8px; border: 1px solid var(--line); border-radius: 3px; }
+  .dpanel table { width: 100%; border-collapse: collapse; font-size: 13.4px; }
+  .dpanel th { text-align: left; background: var(--head); color: var(--nav-d); padding: 6px 10px; border-bottom: 1px solid var(--line); }
+  .dpanel td { padding: 6px 10px; border-bottom: 1px solid #f6e3ea; vertical-align: top; }
+  .dpanel tr:last-child td { border-bottom: 0; }
+  .dpanel td:first-child { font-weight: 600; }
+  .dsrc { font-size: 12px; color: var(--muted); margin-top: 16px; }
+  .dwarn { background: #fff6e8; border: 1px solid #e6bf7a; border-radius: 3px; padding: 8px 12px; font-size: 12.8px; margin-bottom: 12px; }
+
+  @media (min-width: 1160px) { body.cola main { padding-right: 496px; } }
+  @media (max-width: 700px) {
+    header.top .crumb, header.top .brand span { display: none; }
+    #tabCola { writing-mode: horizontal-tb; top: auto; bottom: calc(76px + env(safe-area-inset-bottom, 0px)); right: 12px; border-radius: 20px; border-right: 1px solid var(--nav); padding: 9px 16px; }
+  }
+
+  #printDoc { display: none; }
+  @media print {
+    @page { size: A4; margin: 14mm; }
+    body { background: #fff; }
+    body > *:not(#printDoc) { display: none !important; }
+    #printDoc { display: block; color: #222; font-size: 10.5pt; line-height: 1.4; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    #printDoc .pd-head { display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 8px; }
+    #printDoc .pd-head img { height: 54px; }
+    #printDoc h1 { font-size: 16pt; margin: 0; color: #9c3a62; }
+    #printDoc .pd-head p { margin: 0; color: #86656f; font-size: 10pt; }
+    #printDoc h2 { font-size: 11.5pt; color: #b94b76; border-bottom: 1.5px solid #eaa0ba; margin: 12px 0 5px; padding-bottom: 2px; break-after: avoid; }
+    #printDoc .pl { margin: 0 0 4px; }
+    #printDoc .pl span { margin-right: 18px; display: inline-block; }
+    #printDoc .pb { margin: 0 0 5px; break-inside: avoid; }
+    #printDoc .pv { white-space: pre-wrap; padding-left: 10px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <img class="logo" id="logo" alt="Símbolo da UESB">
+  <div class="brand">UESB <span>| Obstetrícia</span></div>
+  <div class="crumb">Atenção Básica › Pré-natal › Anamnese obstétrica</div>
+  <a class="nav" href="../minhaubs.html">Início</a>
+</header>
+
+<div class="tools"><nav class="chips" id="chips" aria-label="Seções da ficha"></nav></div>
+
+<main>
+  <div class="wrap">
+    <h1>Anamnese obstétrica</h1>
+    <p class="sub">Preencha cada campo. A idade gestacional e a DPP são sugeridas a partir da DUM. Em treino acadêmico, evite dados que identifiquem a paciente (nome completo, endereço, telefone).</p>
+    <div id="form"></div>
+  </div>
+</main>
+
+<button id="tabCola" type="button" aria-controls="drawer" aria-expanded="false">Revisão rápida do pré-natal</button>
+
+<aside class="drawer" id="drawer" aria-label="Revisão rápida do pré-natal">
+  <div class="dhead"><h2>Revisão rápida do pré-natal</h2><button type="button" id="closeCola">Fechar</button></div>
+  <div class="dtabs" id="dtabs" role="tablist" aria-label="Temas"></div>
+  <div class="dbody"><div class="dpanel" id="dpanel" role="tabpanel" tabindex="0"></div></div>
+</aside>
+
+<div class="bar">
+  <span class="status" id="status" role="status" aria-live="polite">Rascunho salvo neste navegador automaticamente.</span>
+  <button class="ghost" id="btnLimpar" type="button">Limpar</button>
+  <button class="sec" id="btnPdf" type="button">Baixar PDF</button>
+  <button id="btnDocx" type="button">Baixar .docx</button>
+</div>
+
+<div id="printDoc"></div>
+
+<script>
+  const LOGO = "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";
+
+  const $ = id => document.getElementById(id);
+  const KEY = "ob-anamnese-rascunho-v1";
+  const st = {};
+
+  const fld = (id, label, t, o) => Object.assign({ id, label, t }, o || {});
+  const T = (id, label, w) => fld(id, label, "t", { w });
+  const A = (id, label, rows) => fld(id, label, "a", { rows });
+  const D = (id, label, w) => fld(id, label, "d", { w });
+  const C = (id, label, opts) => fld(id, label, "c", { opts });
+
+  const SECTIONS = [
+    { id: "ident", short: "Identificação", title: "Identificação", rows: [
+      [T("nome", "Nome", 320), T("pront", "Prontuário", 160)],
+      [T("idade", "Idade", 90), D("nasc", "Data de nascimento", 170), T("sexo", "Sexo/gênero", 160)],
+      [C("cor", "Cor/etnia", ["Branca", "Pardo", "Preta", "Indígena", "Asiático"])],
+      [T("civil", "Estado civil", 170), T("relig", "Religião", 170), T("esc", "Escolaridade", 170)],
+      [T("gs", "GS (grupo sanguíneo)", 150), T("prof", "Profissão", 220)],
+      [T("natur", "Naturalidade", 220), T("proced", "Procedência", 220)],
+      [T("resid", "Residência atual", 420)],
+      [T("tel", "Telefone", 160), D("datar", "Data de realização", 160), T("discente", "Discente", 260)]
+    ]},
+    { id: "queixa", short: "Queixa e HDA", title: "Queixa principal e história da doença atual", rows: [
+      [A("qp", "Queixa principal", 2)],
+      [A("hda", "História da doença atual", 9)]
+    ]},
+    { id: "hpp", short: "HPP", title: "HPP – História patológica pregressa", rows: [
+      [T("hpp_pat", "Patologias prévias ou atuais", 300), T("hpp_med", "Medicamentos em uso", 300)],
+      [T("hpp_cir", "Cirurgias", 200), T("hpp_ale", "Alergias", 200), T("hpp_tr", "Transfusões", 200)],
+      [T("hpp_ac", "Acidentes", 200), T("hpp_vac", "Vacinas", 300)]
+    ]},
+    { id: "go", short: "Gineco-obstétrica", title: "História gineco-obstétrica", rows: [
+      [T("menarca", "Menarca", 140), T("sexarca", "Sexarca", 140), D("dum", "DUM", 170)],
+      [T("ciclos", "Ciclos menstruais", 420)],
+      [T("contra", "Contracepção", 300), T("vidasex", "Vida sexual", 300)],
+      [A("antobs", "Antecedentes obstétricos", 5)]
+    ]},
+    { id: "social", short: "Social", title: "História social", rows: [
+      [T("s_mor", "Condições de moradia", 300), T("s_ali", "Alimentação", 300)],
+      [T("s_ani", "Contato com animais", 300), T("s_dro", "Uso de álcool, fumo ou drogas ilícitas", 300)],
+      [T("s_ativ", "Atividade física", 300), T("s_rio", "Banho de rio", 300)]
+    ]},
+    { id: "familiar", short: "Familiar", title: "História familiar", rows: [
+      [T("hf_has", "HAS", 200), T("hf_dm", "DM", 200), T("hf_card", "Cardiopatias", 200)],
+      [T("hf_dis", "Dislipidemias", 200), T("hf_mama", "Câncer de mama (idade de acometimento)", 280), T("hf_neo", "Neoplasia em geral", 200)],
+      [T("hf_osteo", "Osteoporose", 200), T("hf_end", "Doenças endócrinas", 200), T("hf_gen", "Doenças genéticas", 200)]
+    ]},
+    { id: "rev", short: "Revisão de sistemas", title: "Revisão dos sistemas", rows: [
+      [A("rev", "Revisão dos sistemas", 4)]
+    ]},
+    { id: "fisico", short: "Exame físico geral", title: "Exame físico geral", rows: [
+      [T("ecto", "Ectoscopia", 300), T("marcha", "Marcha", 200)],
+      [T("temp", "Temperatura (°C)", 110), T("pulso", "Pulso (bpm)", 110), T("pa", "PA (x mmHg)", 120), T("fr", "FR (ipm)", 110)],
+      [T("mucosas", "Mucosas", 420)],
+      [T("peso", "Peso (kg)", 100), T("alt", "Altura (m ou cm)", 110), T("imc", "IMC", 100)],
+      [T("tireoide", "Tireoide", 260), T("ac", "Ausculta cardíaca", 260)],
+      [T("ar", "Ausculta respiratória", 260), T("mmii", "MMII", 260)]
+    ], note: "O IMC é calculado automaticamente quando peso e altura são preenchidos; você pode editá-lo." },
+    { id: "mamas", short: "Mamas", title: "Exame das mamas", rows: [
+      [T("m_insp", "Inspeção", 300), T("m_palp", "Palpação", 300)],
+      [T("m_ax", "Axilas e fossas supraclaviculares", 300), T("m_cap", "Complexo areolo-papilar", 300)]
+    ]},
+    { id: "abdome", short: "Abdome", title: "Exame do abdome", rows: [
+      [T("a_insp", "Inspeção", 300), T("a_palp", "Palpação", 300)],
+      [A("a_leo", "Manobras de Leopold", 3)],
+      [T("a_fu", "FU", 160), T("a_bcf", "BCF", 160), T("a_ing", "Região inguinal", 300)]
+    ]},
+    { id: "ge", short: "Genitália externa", title: "Genitália externa", rows: [
+      [T("ge_int", "Integridade", 200), T("ge_muc", "Mucosa", 200), T("ge_pil", "Pilificação", 200)],
+      [T("ge_sec", "Secreções (quantidade, odor)", 260), T("ge_les", "Lesões", 200), T("ge_car", "Carúnculas himenais", 200)],
+      [T("ge_val", "Manobra de Valsalva (pesquisa de prolapso)", 420)]
+    ]},
+    { id: "esp", short: "Especular", title: "Exame especular", rows: [
+      [T("e_vpre", "Vagina – pregueamento", 200), T("e_vtro", "Vagina – trofismo", 200), T("e_vcor", "Vagina – coloração", 200)],
+      [T("e_vsec", "Vagina – secreções", 300), T("e_vles", "Vagina – lesões", 300)],
+      [T("e_casp", "Colo uterino – aspecto", 200), T("e_cori", "Colo uterino – forma do orifício", 220), T("e_cjec", "Colo uterino – JEC", 160)],
+      [T("e_cpos", "Colo uterino – posição", 300), T("e_cles", "Colo uterino – lesões", 300)]
+    ]},
+    { id: "toque", short: "Toque vaginal", title: "Toque vaginal", rows: [
+      [T("t_ton", "Tônus do m. elevador do ânus", 300), T("t_ver", "Posição do útero (“versão”)", 300)],
+      [T("t_vamp", "Vagina – amplitude", 200), T("t_vcon", "Vagina – consistência", 200), T("t_vtem", "Vagina – temperatura", 200)],
+      [T("t_vcom", "Vagina – comprimento", 300), T("t_vsup", "Vagina – superfície", 300)],
+      [T("t_cpos", "Colo – posição", 200), T("t_ccom", "Colo – comprimento", 200), T("t_cdir", "Colo – direção", 200)],
+      [T("t_cvol", "Colo – volume", 200), T("t_cfor", "Colo – forma", 200), T("t_creg", "Colo – regularidade de superfície", 260)]
+    ]},
+    { id: "compl", short: "Exames compl.", title: "Exames complementares", rows: [
+      [A("exc", "Exames complementares", 4)]
+    ]},
+    { id: "imp", short: "Impressão", title: "Impressão diagnóstica", rows: [
+      [T("gesta", "Gesta", 90), T("para", "Para", 90), T("aborto", "Abortos", 90), T("ig", "Idade gestacional", 220), T("dpp", "DPP (data provável do parto)", 200)],
+      [A("imp", "Impressão diagnóstica", 4)]
+    ], note: "IG (pela DUM e data de realização) e DPP (regra de Naegele) são preenchidas automaticamente; edite se a IG foi definida por ultrassonografia." },
+    { id: "conduta", short: "Conduta", title: "Conduta", rows: [
+      [A("conduta", "Conduta", 5)]
+    ]}
+  ];
+
+  /* ---------- revisão rápida (conteúdo do mapa mental "Pré-Natal") ---------- */
+  const H = t => ({ h: t }), P = t => ({ p: t }), U = l => ({ ul: l }), TIP = t => ({ tip: t }), TB = (head, rows) => ({ tbl: { head, rows } });
+  const TABS = [
+    { id: "anam", t: "Anamnese", pri: true, b: [
+      H("Identificação"), U(["Idade", "Escolaridade", "Procedência", "Ocupação", "Situação conjugal", "Gravidez desejada?", "Gravidez aceita?"]),
+      H("Antecedentes ginecológicos"), U(["Características do ciclo menstrual", "Ginecopatias", "Engravidou em uso de anticoncepcional?", "DUM"]),
+      H("Antecedentes pessoais"), U(["Comorbidades", "Uso de medicações", "Tabagismo", "Álcool e drogas ilícitas", "Cirurgias anteriores"]),
+      H("Antecedentes obstétricos"), U(["Paridade (_G_P_A_C)", "Ordem cronológica dos desfechos das gestações", "Dados de abortamentos", "Dados de partos"]),
+      H("Antecedentes familiares"), U(["Comorbidades", "Mãe e irmãs com história de eclâmpsia ou eventos trombóticos?", "Família do pai: gemelaridade, malformações congênitas"]),
+      H("Principais queixas"), U(["Náuseas", "Sonolência", "Polaciúria", "Palpitações", "Cefaleia", "Constipação", "Lombalgia", "Dor em hipogastro", "Alteração na secreção vaginal", "Edema e parestesias"]),
+      H("“Sinais de alerta”"), U(["Sangramento?", "Perda de líquido?", "Dor? Contrações?", "Movimentação fetal?"])
+    ]},
+    { id: "exames", t: "Exames por fase", pri: true, b: [
+      TB(["Quando", "Exames"], [
+        ["Primeira consulta: 5 exames gerais", "Hemograma; tipagem sanguínea; glicemia de jejum; urina 1; urocultura"],
+        ["Primeira consulta: 6 sorologias", "Sífilis; HIV; toxoplasmose; hepatite B; hepatite C; HTLV"],
+        ["Entre 24 e 28 semanas", "TTOG 75g"],
+        ["Com 28 semanas", "Sorologia para sífilis; sorologia para HIV; urina 1/URC"],
+        ["Entre 36 e 37 semanas", "Cultura para EGB"]
+      ]),
+      TIP("Detalhes de cada exame nas abas: Anemia e ácido fólico, Glicemia e TTOG, Tipagem e Rh, Sífilis e HIV, Toxoplasmose e hepatite B, Urina e EGB.")
+    ]},
+    { id: "vacinas", t: "Vacinas", pri: true, b: [
+      H("Vacinação na gestação"),
+      TB(["Vacina", "Situação vacinal", "Vacinação na gestação"], [
+        ["dT/dTpa", "Previamente vacinada com duas ou três doses", "Uma dose de dTpa a partir de 20 semanas para todas as gestantes."],
+        ["dT/dTpa", "Vacina incompleta, tendo recebido apenas uma dose", "Uma dose de dT e uma dose de dTpa, com intervalo de 60 dias (mínimo 30 dias), sendo que a dTpa deve ser feita após 20 semanas."],
+        ["dT/dTpa", "Gestantes não vacinadas ou com histórico vacinal desconhecido", "Duas doses de dT e uma dose de dTpa, com intervalo de 60 dias (mínimo 30 dias) entre as doses, sendo que a dTpa deve ser feita após 20 semanas."],
+        ["Hepatite B", "Vacinadas com esquema completo (3 doses)", "Não vacinar."],
+        ["Hepatite B", "Vacinadas com esquema incompleto", "Completar o esquema vacinal."],
+        ["Hepatite B", "Não vacinadas e suscetíveis", "Três doses, no esquema 0-1-6 meses. Intervalo mínimo: 2ª dose 1 mês após a 1ª; 3ª dose 4 meses após a 1ª."],
+        ["Influenza", "Todas as gestantes", "Dose única anual."],
+        ["Covid-19", "Todas as gestantes", "Uma dose a cada 6 meses."],
+        ["VSR", "Todas as gestantes", "Uma dose após 28 semanas de gestação para todas as gestantes."]
+      ]),
+      H("Contraindicadas na gestação"),
+      P("Vacinas atenuadas:"), U(["Tríplice viral (sarampo, caxumba, rubéola)", "Varicela-zóster", "Dengue", "BCG"]),
+      P("Vacina de antígeno recombinante:"), U(["Papilomavírus humano (HPV)"]),
+      H("Vacinas em situações especiais"), U(["Febre amarela", "Raiva humana", "Meningococo", "Pneumococo", "Hepatite A"])
+    ]},
+    { id: "anemia", t: "Anemia e ácido fólico", pri: true, b: [
+      H("Hemograma e anemia"),
+      TB(["Hemoglobina", "Interpretação e conduta"], [
+        ["Hb ≥ 11 g/dL", "Normal (hemodiluição gravídica). Ferro elementar 40 mg/d."],
+        ["Hb < 11 g/dL", "Anemia. Investigar dieta e parasitoses; avaliação com hematologia se necessário. Ferro elementar 120 a 240 mg/d."]
+      ]),
+      P("Definição de anemia na gestação: Hb < 11 g/dL ou ferritina < 30 ng/mL."),
+      H("Ácido fólico"),
+      P("Dose: 400 µg/d a 5 mg/d."),
+      U(["Reduz o risco de defeitos de fechamento do tubo neural.", "Início: 1 mês antes da concepção até a 12ª semana de gestação.", "Dose para os grupos de risco é 10x maior = 4 a 5 mg/dia."])
+    ]},
+    { id: "egb", t: "Profilaxia de EGB", pri: true, b: [
+      P("Cultura para Streptococcus agalactiae (EGB): entre 36 e 37 semanas."),
+      TB(["Cultura para EGB", "Realizar antibioticoprofilaxia", "NÃO realizar antibioticoprofilaxia"], [
+        ["Positiva", "Trabalho de parto; rotura de membranas ovulares", "Cesárea eletiva"],
+        ["Desconhecida", "Trabalho de parto prematuro; febre intraparto; filho anterior com história de infecção por S. agalactiae; rotura de membranas ovulares há mais de 18 horas; urocultura durante o pré-natal positiva para S. agalactiae", "Cultura positiva para S. agalactiae em gestação anterior"]
+      ])
+    ]},
+    { sep: "Mais temas" },
+    { id: "calendario", t: "Calendário", b: [
+      P("OMS: ≥ 6 consultas."),
+      TB(["Momento", "Frequência"], [
+        ["1ª consulta", "Ao diagnóstico"],
+        ["Após 15 dias", "Retorno para checar resultados"],
+        ["Até 28 semanas", "Mensal"],
+        ["28 a 36 semanas", "Quinzenal"],
+        ["≥ 37 semanas", "Semanal"]
+      ]),
+      TIP("NÃO existe alta do pré-natal!")
+    ]},
+    { id: "igdpp", t: "IG e DPP", b: [
+      H("Como calcular a idade gestacional"),
+      U(["Data da última menstruação (DUM): é o PRIMEIRO dia da menstruação do último ciclo menstrual.", "Primeira ultrassonografia.", "Altura uterina."]),
+      H("Altura uterina"),
+      U(["12ª sem.: sínfise púbica.", "16ª sem.: entre a sínfise púbica e a cicatriz umbilical.", "20ª sem.: cicatriz umbilical.", "20ª a 30ª sem.: relação direta entre AU e as semanas de gestação."]),
+      H("Exemplo pela DUM"),
+      P("DUM = 06/02/2022; consulta pré-natal = 12/04/2022. Fevereiro: 22 dias (28 − 6 dias da DUM); março: 31 dias; abril: 12 dias. Total = 65 dias de gestação; 65 ÷ 7 = 9 semanas e 2 dias."),
+      H("Pela ultrassonografia"),
+      P("Contar os dias entre a data do USG e a data da consulta, converter em semanas e dias e somar ao resultado do USG (ex.: USG com 10 semanas)."),
+      H("Data provável do parto (DPP)"),
+      P("Regra de Naegele: somar 7 aos dias e subtrair 3 dos meses da DUM = DPP."),
+      TIP("Dica de prova, erro de data da USG (a regra não é tão fidedigna, mas ajuda nas questões): USG do 1º trimestre, erro de 1 semana (7 dias); 2º trimestre, 2 semanas (14 dias); 3º trimestre, 3 semanas (21 dias).")
+    ]},
+    { id: "glicemia", t: "Glicemia e TTOG", b: [
+      H("Glicemia de jejum (início do pré-natal)"),
+      TB(["Resultado", "Interpretação"], [
+        ["< 92 mg/dL", "Normal. Realizar TTOG 75g entre 24 e 28 semanas."],
+        ["92 a 125 mg/dL", "Diabetes gestacional"],
+        ["≥ 126 mg/dL", "Diabetes prévio à gestação (overt diabetes)"]
+      ]),
+      H("Valores do TTOG 75g"),
+      TB(["Classificação", "Critérios"], [
+        ["Diabetes gestacional", "Jejum ≥ 92 mg/dL; 1 hora após ≥ 180 mg/dL; 2 horas após ≥ 153 mg/dL"],
+        ["Diabetes prévio (overt)", "Jejum ≥ 126 mg/dL; após a 2ª hora ≥ 200 mg/dL"]
+      ])
+    ]},
+    { id: "rh", t: "Tipagem e Rh", b: [
+      H("Tipagem sanguínea + Coombs indireto (ou pai)"),
+      TB(["Situação", "Conduta"], [
+        ["Rh positivo e Coombs indireto negativo", "Não há risco de aloimunização Rh. Pré-natal de rotina."],
+        ["Rh negativo e Coombs indireto negativo", "Tipagem sanguínea do pai biológico do feto. Pai Rh negativo: sem risco de aloimunização, pré-natal de rotina. Pai Rh positivo ou desconhecido: risco de aloimunização Rh; seguimento com Coombs indireto mensal e profilaxia com imunoglobulina anti-D."],
+        ["Rh negativo e Coombs indireto positivo", "Gestante com aloimunização Rh. Seguimento em pré-natal de alto risco."]
+      ]),
+      H("Profilaxia para aloimunização materna"),
+      U(["Quem? Gestantes Rh negativas com Coombs indireto negativo.", "Como? Imunoglobulina anti-D 300 µg via intramuscular."]),
+      P("Quando (indicações pelo antígeno D):"),
+      U(["Com 28 semanas de gestação", "Sangramento de primeira ou segunda metade da gestação", "Realização de procedimentos intrauterinos", "Trauma abdominal", "Em até 72 horas após o parto, se o recém-nascido for Rh positivo"])
+    ]},
+    { id: "sifhiv", t: "Sífilis e HIV", b: [
+      H("Sífilis"),
+      P("Teste positivo para sífilis (treponêmico e não treponêmico):"),
+      U(["Tratamento imediato da gestante (penicilina benzatina IM).", "Tratamento concomitante do parceiro (penicilina benzatina IM).", "Confirmação diagnóstica com segundo teste (treponêmico ou não treponêmico)."]),
+      TB(["Classificação", "Dose"], [
+        ["Sífilis recente", "2,4 milhões UI, dose única"],
+        ["Sífilis tardia/indeterminada", "2,4 milhões UI por 3 semanas"]
+      ]),
+      TIP("ATENÇÃO! NÃO aguardar a confirmação diagnóstica para iniciar o tratamento."),
+      H("HIV"),
+      U(["Confirmar diagnóstico", "Carga viral + CD4", "Terapia antirretroviral"])
+    ]},
+    { id: "toxohb", t: "Toxoplasmose e hepatite B", b: [
+      H("Toxoplasmose"),
+      TB(["IgM / IgG", "Interpretação"], [
+        ["IgM negativo / IgG negativo", "Suscetível"],
+        ["IgM negativo / IgG positivo", "Imune"],
+        ["IgM positivo / IgG negativo", "Infecção recente"],
+        ["IgM positivo / IgG positivo", "Teste de avidez para IgG se IG < 16 semanas: avidez baixa = infecção recente; avidez alta = infecção antiga"]
+      ]),
+      H("Hepatite B"),
+      TB(["Marcadores", "Interpretação"], [
+        ["Ag Hbs negativo, Anti-Hbs negativo, Anti-Hbc negativo", "Suscetível. Orientar vacinação."],
+        ["Ag Hbs negativo, Anti-Hbs positivo, Anti-Hbc negativo ou positivo", "Imune"],
+        ["Ag Hbs positivo", "Infecção. Seguimento especializado."]
+      ])
+    ]},
+    { id: "urina", t: "Urina", b: [
+      TB(["Paciente", "Conduta"], [
+        ["Sintomática", "Tratar. Repetir a urocultura após o tratamento."],
+        ["Assintomática", "Urocultura. Se > 100.000 UFC/mL = bacteriúria assintomática: SEMPRE tratar e repetir a urocultura após o tratamento."]
+      ])
+    ]},
+    { id: "fisico", t: "Exame físico", b: [
+      H("Exame físico obstétrico"),
+      U(["Manobras obstétricas (situação / posição / apresentação / insinuação)", "Altura uterina", "Ausculta fetal", "Tônus uterino", "Dinâmica uterina", "Movimentação fetal"]),
+      H("Geral"),
+      U(["Estado geral", "Mucosas", "Peso, altura e IMC (colocar na curva!)", "Pressão arterial", "Frequência cardíaca"]),
+      H("Altura uterina (AU)"),
+      U(["Colocar na curva de AU x idade gestacional.", "Deve estar entre o P10 e o P90."]),
+      H("Ausculta fetal"),
+      U(["Sonar fetal: a partir de 10 a 12 semanas.", "Estetoscópio de Pinard: a partir de 20 semanas."]),
+      H("Inspeção: ectoscopia"),
+      U(["Diástase dos músculos reto-abdominais", "Cicatrizes prévias", "Linha nigra", "Melasma gravídico", "Estrias", "Edema", "Varizes", "Andar anserino"]),
+      H("Inspeção: mamas"), U(["Tubérculos de Montgomery", "Sinal de Hunter", "Rede venosa de Haller"]),
+      H("Inspeção: ginecológica"), U(["Sinal de Jacquemier-Chadwick", "Sinal de Kluge"])
+    ]},
+    { id: "meds", t: "Medicamentos contraindicados", b: [
+      H("Categoria X"),
+      U(["Anticoagulante cumarínico (varfarina)", "Retinoides (isotretinoína; etretinato)", "Hormônios (andrógenos; estrógenos)", "Antineoplásicos (metotrexato)", "Antivirais (ribavirina)", "Antimaláricos (quinino)", "Talidomida"]),
+      H("Categoria D"),
+      U(["Anticonvulsivantes (fenitoína, carbamazepina, ácido valpróico, fenobarbital, trimetadiona e parametadiona)", "Ciclofosfamida, tetraciclina e aminoglicosídeos", "Antifúngicos (fluconazol, itraconazol)", "Anti-hipertensivos: iECA e BRA (categoria C no 1º trimestre e categoria D no 2º trimestre)"])
+    ]}
+  ];
+
+  /* ---------- utilidades ---------- */
+  const esc = s => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+  function el(tag, cls, html) { const e = document.createElement(tag); if (cls) e.className = cls; if (html !== undefined) e.innerHTML = html; return e; }
+  function setStatus(msg, cls) { const s = $("status"); s.textContent = msg; s.className = "status" + (cls ? " " + cls : ""); }
+  function grow(e) { if (e.tagName === "TEXTAREA") { e.style.height = "auto"; e.style.height = (e.scrollHeight + 2) + "px"; } }
+  function persist() { try { localStorage.setItem(KEY, JSON.stringify(st)); } catch (e) {} }
+  const todayIso = () => { const d = new Date(); return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"); };
+  function fmtDate(iso) { if (!iso || !/^\d{4}-\d{2}-\d{2}$/.test(iso)) return iso || ""; const [y, m, d] = iso.split("-"); return d + "/" + m + "/" + y; }
+  function ymd(s) { if (!/^\d{4}-\d{2}-\d{2}$/.test(s || "")) return null; const [y, m, d] = s.split("-").map(Number); return { y, m, d }; }
+
+  function calcImc() {
+    const p = parseFloat(String(st.peso || "").replace(",", "."));
+    let h = parseFloat(String(st.alt || "").replace(",", "."));
+    if (!(p > 0) || !(h > 0)) return;
+    if (h > 3) h = h / 100;
+    const v = (p / (h * h)).toFixed(1).replace(".", ",");
+    st.imc = v; $("imc").value = v;
+  }
+
+  /* IG pela DUM e DPP pela regra de Naegele */
+  function calcIgDpp() {
+    const du = ymd(st.dum); if (!du) return;
+    const ref = ymd(st.datar) || ymd(todayIso());
+    if (!st._mIg) {
+      const days = Math.round((Date.UTC(ref.y, ref.m - 1, ref.d) - Date.UTC(du.y, du.m - 1, du.d)) / 864e5);
+      if (days >= 0 && days <= 300) {
+        const v = Math.floor(days / 7) + " semanas e " + (days % 7) + " dias";
+        st.ig = v; $("ig").value = v; grow($("ig"));
+      }
+    }
+    if (!st._mDpp) {
+      const base = new Date(Date.UTC(du.y, du.m - 1, du.d + 7));
+      const y2 = base.getUTCFullYear(), m2 = base.getUTCMonth(), d2 = base.getUTCDate();
+      let m3 = m2 - 3, y3 = y2;
+      if (m3 < 0) m3 += 12; else y3 = y2 + 1;
+      const dim = new Date(Date.UTC(y3, m3 + 1, 0)).getUTCDate();
+      const dd = Math.min(d2, dim);
+      const v = String(dd).padStart(2, "0") + "/" + String(m3 + 1).padStart(2, "0") + "/" + y3;
+      st.dpp = v; $("dpp").value = v; grow($("dpp"));
+    }
+    persist();
+  }
+
+  /* ---------- formulário ---------- */
+  function buildField(f) {
+    const d = el("div", "fld" + (f.t === "a" ? " full" : ""));
+    if (f.t !== "a") d.style.flex = "1 1 " + (f.w || 200) + "px";
+    if (f.t === "c") {
+      d.appendChild(el("span", "lbl", esc(f.label)));
+      const g = el("div", "cks"); g.dataset.id = f.id; g.setAttribute("role", "group"); g.setAttribute("aria-label", f.label);
+      f.opts.forEach(o => {
+        const l = el("label", "ck", '<input type="checkbox"><span class="bx" aria-hidden="true"></span><span>' + esc(o) + "</span>");
+        const inp = l.querySelector("input"); inp.value = o;
+        inp.addEventListener("change", () => {
+          if (inp.checked) { g.querySelectorAll("input").forEach(x => { if (x !== inp) x.checked = false; }); st[f.id] = o; }
+          else st[f.id] = "";
+          persist();
+        });
+        g.appendChild(l);
+      });
+      d.appendChild(g); return d;
+    }
+    const lab = el("label", "lbl", esc(f.label)); lab.htmlFor = f.id; d.appendChild(lab);
+    let inp;
+    if (f.t === "d") { inp = el("input", "in"); inp.type = "date"; }
+    else { inp = el("textarea", "in ta" + (f.t === "a" ? " big" : "")); inp.rows = f.rows || 1; }
+    inp.id = f.id; inp.autocomplete = "off";
+    inp.addEventListener("input", () => {
+      st[f.id] = inp.value; grow(inp);
+      if (f.id === "peso" || f.id === "alt") calcImc();
+      if (f.id === "dum" || f.id === "datar") calcIgDpp();
+      if (f.id === "ig") st._mIg = !!inp.value.trim();
+      if (f.id === "dpp") st._mDpp = !!inp.value.trim();
+      persist();
+    });
+    d.appendChild(inp); return d;
+  }
+
+  function buildForm() {
+    const root = $("form"), chips = $("chips");
+    SECTIONS.forEach(sec => {
+      const card = el("section", "card"); card.id = "s-" + sec.id;
+      card.appendChild(el("div", "chead", "<h2>" + esc(sec.title) + "</h2>"));
+      const body = el("div", "cbody");
+      sec.rows.forEach(row => { const r = el("div", "row"); row.forEach(f => r.appendChild(buildField(f))); body.appendChild(r); });
+      if (sec.note) body.appendChild(el("p", "snote", esc(sec.note)));
+      card.appendChild(body); root.appendChild(card);
+      const a = el("a", null, esc(sec.short)); a.href = "#s-" + sec.id; chips.appendChild(a);
+    });
+  }
+
+  function allFields() { return SECTIONS.flatMap(s => s.rows.flat()); }
+
+  function applyState() {
+    allFields().forEach(f => {
+      const v = st[f.id];
+      if (f.t === "c") {
+        const g = document.querySelector('.cks[data-id="' + f.id + '"]');
+        g.querySelectorAll("input").forEach(i => { i.checked = !!(v && i.value === v); });
+      } else { const e = $(f.id); e.value = v || ""; grow(e); }
+    });
+  }
+
+  function loadState() {
+    try { const raw = localStorage.getItem(KEY); if (raw) Object.assign(st, JSON.parse(raw)); } catch (e) {}
+    if (!st.datar) st.datar = todayIso();
+    applyState();
+  }
+
+  $("btnLimpar").addEventListener("click", () => {
+    if (!confirm("Apagar todos os campos desta ficha?")) return;
+    Object.keys(st).forEach(k => delete st[k]);
+    st.datar = todayIso(); applyState(); persist();
+    setStatus("Ficha limpa.");
+  });
+
+  /* ---------- revisão rápida ---------- */
+  function renderBlocks(blocks) {
+    return blocks.map(b => {
+      if (b.h) return "<h3>" + esc(b.h) + "</h3>";
+      if (b.p) return "<p>" + esc(b.p) + "</p>";
+      if (b.tip) return '<div class="tip">' + esc(b.tip) + "</div>";
+      if (b.ul) return "<ul>" + b.ul.map(x => "<li>" + esc(x) + "</li>").join("") + "</ul>";
+      if (b.tbl) return '<div class="tw"><table><thead><tr>' + b.tbl.head.map(h => "<th>" + esc(h) + "</th>").join("") + "</tr></thead><tbody>" +
+        b.tbl.rows.map(r => "<tr>" + r.map(c => "<td>" + esc(c) + "</td>").join("") + "</tr>").join("") + "</tbody></table></div>";
+      return "";
+    }).join("");
+  }
+
+  function selectTab(id) {
+    document.querySelectorAll("#dtabs [role=tab]").forEach(b => b.setAttribute("aria-selected", b.dataset.id === id ? "true" : "false"));
+    const tab = TABS.find(t => t.id === id);
+    $("dpanel").innerHTML = renderBlocks(tab.b) + '<p class="dsrc">Fonte: mapa mental “Pré-Natal” (Estratégia MED). Material de revisão; confirme condutas no protocolo vigente.</p>';
+    $("dpanel").parentElement.scrollTop = 0;
+  }
+
+  function buildCola() {
+    const box = $("dtabs");
+    box.appendChild(el("div", "sepl", "Prioridade"));
+    TABS.forEach(t => {
+      if (t.sep) { box.appendChild(el("div", "sepl", esc(t.sep))); return; }
+      const b = el("button", t.pri ? "pri" : "", esc(t.t)); b.type = "button"; b.setAttribute("role", "tab"); b.dataset.id = t.id;
+      b.addEventListener("click", () => selectTab(t.id));
+      box.appendChild(b);
+    });
+    selectTab(TABS[0].id);
+  }
+
+  function toggleCola(open) {
+    const d = $("drawer");
+    const on = open === undefined ? !d.classList.contains("open") : open;
+    d.classList.toggle("open", on);
+    document.body.classList.toggle("cola", on);
+    $("tabCola").setAttribute("aria-expanded", on ? "true" : "false");
+  }
+  $("tabCola").addEventListener("click", () => toggleCola());
+  $("closeCola").addEventListener("click", () => toggleCola(false));
+  document.addEventListener("keydown", e => { if (e.key === "Escape") toggleCola(false); });
+
+  /* ---------- exportação ---------- */
+  function val(f) { const v = st[f.id] || ""; return f.t === "d" ? fmtDate(v) : v.trim(); }
+
+  function collect() {
+    return SECTIONS.map(sec => {
+      const lines = [];
+      sec.rows.forEach(row => {
+        const inline = row.filter(f => f.t !== "a");
+        if (inline.length) lines.push({ inline: inline.map(f => [f.label, val(f)]) });
+        row.filter(f => f.t === "a").forEach(f => lines.push({ block: [f.label, val(f)] }));
+      });
+      return { title: sec.title, lines };
+    });
+  }
+
+  function fileName() {
+    const ini = (st.nome || "").trim().split(/\s+/).filter(Boolean).map(w => w[0].toUpperCase()).join("");
+    return "Anamnese-OB" + (ini ? "-" + ini : "") + "-" + (st.datar || todayIso());
+  }
+
+  function download(blob, name) {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a"); a.href = url; a.download = name;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 2000);
+  }
+
+  async function buildDocx() {
+    const { Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType, ImageRun, BorderStyle } = window.docx;
+    const kids = [];
+    const bin = Uint8Array.from(atob(LOGO), c => c.charCodeAt(0));
+    kids.push(new Paragraph({ alignment: AlignmentType.CENTER, children: [new ImageRun({ data: bin, type: "png", transformation: { width: 58, height: 61 } })] }));
+    kids.push(new Paragraph({ alignment: AlignmentType.CENTER, spacing: { after: 40 }, children: [new TextRun({ text: "OBSTETRÍCIA – ANAMNESE", bold: true, size: 30, color: "9C3A62" })] }));
+    kids.push(new Paragraph({ alignment: AlignmentType.CENTER, spacing: { after: 200 }, children: [new TextRun({ text: "Anamnese obstétrica – UESB", size: 20, color: "86656F" })] }));
+    collect().forEach(sec => {
+      kids.push(new Paragraph({
+        heading: HeadingLevel.HEADING_2, keepNext: true, spacing: { before: 260, after: 80 },
+        border: { bottom: { style: BorderStyle.SINGLE, size: 6, color: "EAA0BA", space: 2 } },
+        children: [new TextRun({ text: sec.title, bold: true, color: "B94B76" })]
+      }));
+      sec.lines.forEach(ln => {
+        if (ln.inline) {
+          const runs = [];
+          ln.inline.forEach(([l, v], i) => {
+            if (i) runs.push(new TextRun({ text: "      " }));
+            runs.push(new TextRun({ text: l + ": ", bold: true }));
+            runs.push(new TextRun({ text: (v || "—").replace(/\s*\n\s*/g, " ") }));
+          });
+          kids.push(new Paragraph({ spacing: { after: 60 }, children: runs }));
+        } else {
+          const [l, v] = ln.block;
+          kids.push(new Paragraph({ spacing: { after: 20 }, keepNext: true, children: [new TextRun({ text: l + ":", bold: true })] }));
+          (v || "—").split(/\n/).forEach(t => kids.push(new Paragraph({ spacing: { after: 40 }, indent: { left: 240 }, children: [new TextRun(t)] })));
+        }
+      });
+    });
+    const doc = new Document({
+      styles: { default: { document: { run: { font: "Calibri", size: 21 } } } },
+      sections: [{ properties: { page: { margin: { top: 900, bottom: 900, left: 1000, right: 1000 } } }, children: kids }]
+    });
+    return Packer.toBlob(doc);
+  }
+
+  $("btnDocx").addEventListener("click", async () => {
+    if (!window.docx) { setStatus("A biblioteca do .docx não carregou. Verifique a conexão.", "err"); return; }
+    try { download(await buildDocx(), fileName() + ".docx"); setStatus("Arquivo .docx baixado. Abra no Word ou no Google Docs.", "ok"); }
+    catch (e) { setStatus("Não foi possível gerar o .docx.", "err"); }
+  });
+
+  function buildPrint() {
+    let h = '<div class="pd-head"><img src="data:image/png;base64,' + LOGO + '" alt="UESB"><div><h1>OBSTETRÍCIA – ANAMNESE</h1><p>Anamnese obstétrica – UESB</p></div></div>';
+    collect().forEach(sec => {
+      h += "<h2>" + esc(sec.title) + "</h2>";
+      sec.lines.forEach(ln => {
+        if (ln.inline) h += '<p class="pl">' + ln.inline.map(([l, v]) => "<span><b>" + esc(l) + ":</b> " + (v ? esc(v).replace(/\n/g, " ") : "—") + "</span>").join("") + "</p>";
+        else h += '<div class="pb"><b>' + esc(ln.block[0]) + ':</b><div class="pv">' + (ln.block[1] ? esc(ln.block[1]) : "—") + "</div></div>";
+      });
+    });
+    $("printDoc").innerHTML = h;
+  }
+
+  $("btnPdf").addEventListener("click", () => {
+    buildPrint();
+    const old = document.title; document.title = fileName();
+    window.addEventListener("afterprint", () => { document.title = old; }, { once: true });
+    setStatus("Na janela de impressão, escolha “Salvar como PDF” como destino.", "ok");
+    window.print();
+  });
+
+  /* ---------- início ---------- */
+  $("logo").src = "data:image/png;base64," + LOGO;
+  buildForm(); buildCola(); loadState();
+</script>
+</body>
+</html>
