@@ -55,6 +55,21 @@
   }
   header.top .navlink:hover { background: rgba(255,255,255,.12); }
   header.top .navlink:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+  header.top .menu { position: relative; }
+  header.top .menubtn {
+    font: inherit; color: #fff; background: transparent; cursor: pointer; white-space: nowrap;
+    font-size: 13.5px; font-weight: 600; padding: 6px 12px; border: 1px solid rgba(255,255,255,.45); border-radius: 3px;
+  }
+  header.top .menubtn:hover, header.top .menubtn[aria-expanded="true"] { background: rgba(255,255,255,.14); }
+  header.top .menubtn:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+  header.top .menulist {
+    position: absolute; right: 0; top: calc(100% + 8px); min-width: 230px; z-index: 30;
+    background: #fff; border: 1px solid var(--line); border-top: 3px solid var(--teal); border-radius: 3px;
+    box-shadow: 0 6px 18px rgba(15,61,99,.22); padding: 4px 0;
+  }
+  header.top .menulist[hidden] { display: none; }
+  header.top .menulist a { display: block; padding: 9px 16px; color: var(--nav); text-decoration: none; font-size: 14px; font-weight: 600; }
+  header.top .menulist a:hover, header.top .menulist a:focus-visible { background: #eef5fb; outline: none; }
 
   main { max-width: 980px; margin: 0 auto; padding: 20px 16px 120px; }
   h1 { font-size: 20px; margin: 4px 0 2px; color: var(--nav); }
@@ -128,9 +143,9 @@
     .soap .letter { font-size: 22px; }
     header.top .crumb { display: none; }
     header.top { padding: 0 10px; gap: 8px; }
-    header.top .navlink { padding: 5px 8px; font-size: 12px; }
+    header.top .menubtn { padding: 5px 9px; font-size: 12.5px; }
     header.top .brand span { display: none; }
-    header.top .crumb + .navlink { margin-left: auto; }
+    header.top .crumb + .menu { margin-left: auto; }
   }
 </style>
 </head>
@@ -138,8 +153,15 @@
 <header class="top">
   <div class="brand">PEC <span>| Prontuário Eletrônico</span></div>
   <div class="crumb">Atenção Básica › Atendimento individual › SOAP</div>
-  <a class="navlink" href="https://minhaubs.vercel.app/dosesped.html/">Doses em pediatria</a>
-  <a class="navlink" href="https://minhaubs.vercel.app/anamneseGO.html//">Anamnese GO</a>
+  <div class="menu" id="menu">
+    <button class="menubtn" id="menuBtn" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="menuList">Ferramentas ▾</button>
+    <div class="menulist" id="menuList" hidden>
+      <a href="obstetricia/">Anamnese obstétrica</a>
+      <a href="ginecologia/">https://minhaubs.vercel.app/anamneseGO.html</a>
+      <a href="https://minhaubs.vercel.app/dosesped.html//">Doses em pediatria</a>
+      <a href="risco-cardiovascular/">Risco cardiovascular</a>
+    </div>
+  </div>
 </header>
 
 <main>
@@ -409,6 +431,14 @@
       btn.disabled = false;
     }
   });
+
+  (function () {
+    const btn = document.getElementById("menuBtn"), list = document.getElementById("menuList");
+    function setOpen(on) { list.hidden = !on; btn.setAttribute("aria-expanded", on ? "true" : "false"); }
+    btn.addEventListener("click", e => { e.stopPropagation(); setOpen(list.hidden); });
+    document.addEventListener("click", e => { if (!document.getElementById("menu").contains(e.target)) setOpen(false); });
+    document.addEventListener("keydown", e => { if (e.key === "Escape") { setOpen(false); btn.focus(); } });
+  })();
 
   load();
 </script>
